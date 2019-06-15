@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2019-06-06T15:16:29Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.2.2"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.57,
+        "LayerNumber": 2,
+        "Name": {
+            "ProjectId": "slave"
+        },
+        "Owner": "Joshua Petrin <joshua.m.petrin@vanderbilt.edu>",
+        "Size": {
+            "X": 217,
+            "Y": 21
+        }
+    }
+}

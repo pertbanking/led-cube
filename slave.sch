@@ -3,7 +3,7 @@
 <eagle version="9.2.2">
 <drawing>
 <settings>
-<setting alwaysvectorfont="no"/>
+<setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
@@ -4893,7 +4893,7 @@ Source: AVX .. aphvc.pdf</description>
 <part name="PAD5" library="wirepad" library_urn="urn:adsk.eagle:library:412" deviceset="2,54/0,8" device="" package3d_urn="urn:adsk.eagle:package:30838/1"/>
 <part name="PAD6" library="wirepad" library_urn="urn:adsk.eagle:library:412" deviceset="2,54/0,8" device="" package3d_urn="urn:adsk.eagle:package:30838/1"/>
 <part name="PAD7" library="wirepad" library_urn="urn:adsk.eagle:library:412" deviceset="2,54/0,8" device="" package3d_urn="urn:adsk.eagle:package:30838/1"/>
-<part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-US" device="C0805" package3d_urn="urn:adsk.eagle:package:23617/2"/>
+<part name="C1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-US" device="C0805" package3d_urn="urn:adsk.eagle:package:23617/2" value="0.1u"/>
 </parts>
 <sheets>
 <sheet>
@@ -4917,37 +4917,37 @@ Source: AVX .. aphvc.pdf</description>
 <attribute name="VALUE" x="102.87" y="58.42" size="1.778" layer="96" rot="R180"/>
 <attribute name="NAME" x="102.87" y="37.338" size="1.778" layer="95" rot="R180"/>
 </instance>
-<instance part="PAD0" gate="P" x="121.92" y="20.32" smashed="yes" rot="R180">
-<attribute name="NAME" x="123.063" y="18.4658" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="123.063" y="23.622" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD0" gate="P" x="162.56" y="20.32" smashed="yes" rot="R180">
+<attribute name="NAME" x="163.703" y="18.4658" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="163.703" y="23.622" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PAD1" gate="P" x="129.54" y="17.78" smashed="yes" rot="R180">
-<attribute name="NAME" x="130.683" y="15.9258" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="130.683" y="21.082" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD1" gate="P" x="170.18" y="15.24" smashed="yes" rot="R180">
+<attribute name="NAME" x="171.323" y="13.3858" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="171.323" y="18.542" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PAD2" gate="P" x="121.92" y="15.24" smashed="yes" rot="R180">
-<attribute name="NAME" x="123.063" y="13.3858" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="123.063" y="18.542" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD2" gate="P" x="162.56" y="10.16" smashed="yes" rot="R180">
+<attribute name="NAME" x="163.703" y="8.3058" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="163.703" y="13.462" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PAD3" gate="P" x="129.54" y="12.7" smashed="yes" rot="R180">
-<attribute name="NAME" x="130.683" y="10.8458" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="130.683" y="16.002" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD3" gate="P" x="170.18" y="5.08" smashed="yes" rot="R180">
+<attribute name="NAME" x="171.323" y="3.2258" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="171.323" y="8.382" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PAD4" gate="P" x="121.92" y="10.16" smashed="yes" rot="R180">
-<attribute name="NAME" x="123.063" y="8.3058" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="123.063" y="13.462" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD4" gate="P" x="162.56" y="0" smashed="yes" rot="R180">
+<attribute name="NAME" x="163.703" y="-1.8542" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="163.703" y="3.302" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PAD5" gate="P" x="129.54" y="7.62" smashed="yes" rot="R180">
-<attribute name="NAME" x="130.683" y="5.7658" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="130.683" y="10.922" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD5" gate="P" x="170.18" y="-5.08" smashed="yes" rot="R180">
+<attribute name="NAME" x="171.323" y="-6.9342" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="171.323" y="-1.778" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PAD6" gate="P" x="121.92" y="5.08" smashed="yes" rot="R180">
-<attribute name="NAME" x="123.063" y="3.2258" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="123.063" y="8.382" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD6" gate="P" x="162.56" y="-10.16" smashed="yes" rot="R180">
+<attribute name="NAME" x="163.703" y="-12.0142" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="163.703" y="-6.858" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="PAD7" gate="P" x="129.54" y="2.54" smashed="yes" rot="R180">
-<attribute name="NAME" x="130.683" y="0.6858" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="130.683" y="5.842" size="1.778" layer="96" rot="R180"/>
+<instance part="PAD7" gate="P" x="170.18" y="-15.24" smashed="yes" rot="R180">
+<attribute name="NAME" x="171.323" y="-17.0942" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="171.323" y="-11.938" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="C1" gate="G$1" x="96.52" y="63.5" smashed="yes" rot="R90">
 <attribute name="NAME" x="95.885" y="64.516" size="1.778" layer="95" rot="R90"/>
@@ -4960,13 +4960,19 @@ Source: AVX .. aphvc.pdf</description>
 <net name="VCC" class="0">
 <segment>
 <wire x1="91.44" y1="53.34" x2="88.9" y2="53.34" width="0.1524" layer="91"/>
-<wire x1="88.9" y1="53.34" x2="88.9" y2="63.5" width="0.1524" layer="91"/>
 <pinref part="P+2" gate="VCC" pin="VCC"/>
 <pinref part="SV1" gate="1" pin="1"/>
 <pinref part="C1" gate="G$1" pin="1"/>
+<wire x1="88.9" y1="53.34" x2="88.9" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="88.9" y1="58.42" x2="88.9" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="63.5" x2="88.9" y2="68.58" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="63.5" x2="88.9" y2="63.5" width="0.1524" layer="91"/>
 <junction x="88.9" y="63.5"/>
+<pinref part="SV1" gate="1" pin="4"/>
+<wire x1="106.68" y1="50.8" x2="111.76" y2="50.8" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="50.8" x2="111.76" y2="58.42" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="58.42" x2="88.9" y2="58.42" width="0.1524" layer="91"/>
+<junction x="88.9" y="58.42"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -5076,60 +5082,74 @@ Source: AVX .. aphvc.pdf</description>
 <wire x1="66.04" y1="2.54" x2="86.36" y2="2.54" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$10" class="0">
+<net name="N$1" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="1Q"/>
+<wire x1="111.76" y1="20.32" x2="160.02" y2="20.32" width="0.1524" layer="91"/>
 <pinref part="PAD0" gate="P" pin="P"/>
-<wire x1="111.76" y1="20.32" x2="119.38" y2="20.32" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$11" class="0">
+<net name="N$2" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="2Q"/>
+<wire x1="111.76" y1="17.78" x2="129.54" y2="17.78" width="0.1524" layer="91"/>
+<wire x1="129.54" y1="17.78" x2="129.54" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="129.54" y1="15.24" x2="167.64" y2="15.24" width="0.1524" layer="91"/>
 <pinref part="PAD1" gate="P" pin="P"/>
-<wire x1="111.76" y1="17.78" x2="127" y2="17.78" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$12" class="0">
+<net name="N$3" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="3Q"/>
+<wire x1="111.76" y1="15.24" x2="127" y2="15.24" width="0.1524" layer="91"/>
+<wire x1="127" y1="15.24" x2="127" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="127" y1="10.16" x2="160.02" y2="10.16" width="0.1524" layer="91"/>
 <pinref part="PAD2" gate="P" pin="P"/>
-<wire x1="111.76" y1="15.24" x2="119.38" y2="15.24" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$13" class="0">
+<net name="N$4" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="4Q"/>
+<wire x1="111.76" y1="12.7" x2="124.46" y2="12.7" width="0.1524" layer="91"/>
+<wire x1="124.46" y1="12.7" x2="124.46" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="124.46" y1="5.08" x2="167.64" y2="5.08" width="0.1524" layer="91"/>
 <pinref part="PAD3" gate="P" pin="P"/>
-<wire x1="111.76" y1="12.7" x2="127" y2="12.7" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$14" class="0">
+<net name="N$5" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="5Q"/>
+<wire x1="111.76" y1="10.16" x2="121.92" y2="10.16" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="10.16" x2="121.92" y2="0" width="0.1524" layer="91"/>
+<wire x1="121.92" y1="0" x2="160.02" y2="0" width="0.1524" layer="91"/>
 <pinref part="PAD4" gate="P" pin="P"/>
-<wire x1="111.76" y1="10.16" x2="119.38" y2="10.16" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$15" class="0">
+<net name="N$6" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="6Q"/>
+<wire x1="111.76" y1="7.62" x2="119.38" y2="7.62" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="7.62" x2="119.38" y2="-5.08" width="0.1524" layer="91"/>
+<wire x1="119.38" y1="-5.08" x2="167.64" y2="-5.08" width="0.1524" layer="91"/>
 <pinref part="PAD5" gate="P" pin="P"/>
-<wire x1="111.76" y1="7.62" x2="127" y2="7.62" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$16" class="0">
+<net name="N$7" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="7Q"/>
+<wire x1="111.76" y1="5.08" x2="116.84" y2="5.08" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="5.08" x2="116.84" y2="-10.16" width="0.1524" layer="91"/>
+<wire x1="116.84" y1="-10.16" x2="160.02" y2="-10.16" width="0.1524" layer="91"/>
 <pinref part="PAD6" gate="P" pin="P"/>
-<wire x1="111.76" y1="5.08" x2="119.38" y2="5.08" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$17" class="0">
+<net name="N$8" class="0">
 <segment>
 <pinref part="IC1" gate="A" pin="8Q"/>
+<wire x1="111.76" y1="2.54" x2="114.3" y2="2.54" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="2.54" x2="114.3" y2="-15.24" width="0.1524" layer="91"/>
+<wire x1="114.3" y1="-15.24" x2="167.64" y2="-15.24" width="0.1524" layer="91"/>
 <pinref part="PAD7" gate="P" pin="P"/>
-<wire x1="111.76" y1="2.54" x2="127" y2="2.54" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

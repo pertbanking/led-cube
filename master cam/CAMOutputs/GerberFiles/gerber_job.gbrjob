@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2019-06-06T16:44:59Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.2.2"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.67,
+        "LayerNumber": 2,
+        "Name": {
+            "ProjectId": "master"
+        },
+        "Owner": "Joshua Petrin <joshua.m.petrin@vanderbilt.edu>",
+        "Size": {
+            "X": 27,
+            "Y": 187
+        }
+    }
+}
