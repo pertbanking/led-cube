@@ -187,6 +187,8 @@ int main(int argc, char* argv[]) {
 
         while(threadalive) ;  // keep this thread alive
 
+        delete usb;
+
         return 0;
     }
 

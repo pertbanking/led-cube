@@ -7,4 +7,5 @@ project(animate)
 add_subdirectory(serial)
 add_executable(animate animation_generator/main.cpp)
 target_link_libraries(animate serial)
-install(TARGETS animate DESTINATION bin)
+
+install(TARGETS animate DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
