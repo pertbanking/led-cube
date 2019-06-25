@@ -6,16 +6,20 @@
  * Author: Joshua Petrin <joshua.m.petrin@vanderbilt.edu>
  */
 
+#ifndef LEDCUBE_CPP_
+#define LEDCUBE_CPP_
 
 #include "LEDCube.h"
 
+#include <functional>
 #include <memory>
+#include <mutex>
+#include <thread>
 #include <vector>
 #include <cassert>
 #include <cstdint>
 
 #include <serial/serial.h>
-#include "timercpp.h"
 
 
 using namespace std;
@@ -27,12 +31,15 @@ using namespace std;
 
 const int SIZE = 8;
 
-LEDCube::instance = nullptr;
+LEDCube* LEDCube::instance = nullptr;
 
+// private, do not use
 LEDCube::LEDCube() {}
 
+// private, do not use
 LEDCube::LEDCube(const LEDCube&) {}
 
+// private, do not use
 const LEDCube& LEDCube::operator=(const LEDCube&) {}
 
 LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
@@ -46,26 +53,55 @@ LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
         )
     , cube_pass(
         vector<vector<uint8_t>>(
-            SIZE, vector<uint8_t>(SIZE, 0)
+            SIZE, vector<uint8_t>(
+                SIZE, 0)
             )
         )
     , usb(usb)
     , magic(magic)
+    , usb_message(new uint8_t[SIZE*SIZE + 1 + magic.size()])
     , data_current(true)
     , framerate(framerate)
-    , animation(Animation()) {
+    , thread_pause(true)
+    , render_function([this]() {
+        while(!this->thread_kill) {
+            while(this->thread_pause and !thread_kill) ;  
+                // wait for the startBroadcast() method
+                // to be called
+            if (this->thread_kill)
+                break;
+            this->usbSend();
+            if (this->thread_kill)
+                break;
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(
+                    int(1000.0 / double(this->framerate))
+                )
+            );
+        }
+      })
+    , render_thread(render_function)
+    , render_lock()
+    , blocking_thread() {
 
+    render_thread.detach();
+
+    usb_message[magic.size() + SIZE*SIZE] = '\n';
 }
 
 LEDCube::~LEDCube() {
-    this->stop();
+    delete[] usb_message;
+    this->thread_kill = true;
+    this->render_thread.join();
+
+    this->instance = nullptr;
 }
 
-LEDCube::getInstance() {
+LEDCube* LEDCube::getInstance() {
     return LEDCube::instance;
 }
 
-LEDCube::getInstance(
+LEDCube* LEDCube::getInstance(
     shared_ptr<serial::Serial> usb, 
     int framerate,
     string magic) {
@@ -73,7 +109,7 @@ LEDCube::getInstance(
     if (LEDCube::instance == nullptr)
         LEDCube::instance = new LEDCube(usb, framerate, magic);
 
-    return this->getInstance();
+    return LEDCube::instance;
 }
 
 
@@ -82,46 +118,46 @@ LEDCube::getInstance(
 // timing and I/O control
 // =======================================
 
+
 void LEDCube::usbSend() {
-
-    int mbl = this->magic.length();
-    uint8_t message[SIZE*SIZE + 1 + mbl];
-
+    std::copy(
+        this->magic.c_str(), 
+        this->magic.c_str() + 
+        this->magic.size(),
+        usb_message);
+    
+    this->lock();
     this->getCubeData();
-
-    std::copy(this->magic.c_str(), this->magic.c_str() + mbl, message);
+    this->unlock();
 
     for (auto i = this->cube_pass.begin(); i != this->cube_pass.end(); ++i) {
         std::copy(
             i->begin(), 
             i->end(), 
-            message + mbl + i->size()*(i - this->cube_pass.begin())
+            this->usb_message + 
+                this->magic.size() + 
+                i->size()*(i - this->cube_pass.begin())
         );
     }
 
-    message[mbl + SIZE*SIZE] = '\n';
-
-    usb->write(message, mbl + SIZE*SIZE + 1);
+    usb->write(this->usb_message, this->magic.size() + SIZE*SIZE + 1);
 }
 
 
-void LEDCube::start() {
-    t.setInterval([]() {
-        // send the cube
-        this->usb_send();
-        this->animation.next();
-
-    }, int(1000.0 / double(this->framerate))); 
+void LEDCube::startBroadcast() {
+    this->thread_pause = false;
 }
 
-void LEDCube::stop() {
-    this->t.stop();
+void LEDCube::pauseBroadcast() {
+    this->thread_pause = true;
+}
+
+bool LEDCube::isBroadcasting() {
+    return !this->thread_pause;
 }
 
 void LEDCube::setFramerate(int f) {
-    this->stop();
     this->framerate = f;
-    this->start();
 }
 
 int LEDCube::getFramerate() const {
@@ -129,12 +165,20 @@ int LEDCube::getFramerate() const {
 }
 
 
-void LEDCube::setAnimation(Animation &a) {
-    this->animation = a;
+void LEDCube::lock() {
+    this->render_lock.lock();
+    this->blocking_thread = this_thread::get_id();
 }
 
-Animation& LEDCube::getAnimation() const {
-    return this->animation;
+bool LEDCube::isLocked() const {
+    return this->blocking_thread != thread::id(); // compare to the default
+}
+
+void LEDCube::unlock() {
+    if (this->blocking_thread == this_thread::get_id()) {
+        this->render_lock.unlock();
+        this->blocking_thread = thread::id(); // set back to the default
+    }
 }
 
 
@@ -143,18 +187,18 @@ Animation& LEDCube::getAnimation() const {
 // data management functions
 // ===============================================
 
-vector<vector<vector<bool>>>& LEDCube::getCube() const {
+vector<vector<vector<bool>>>& LEDCube::getCube() {
     return this->data;
 }
 
-vector<vector<uint8_t>> getCubeData() const {
-    if (!this->data_current) {
-        assert(this->data.size() == SIZE)
+const vector<vector<uint8_t>>& LEDCube::getCubeData() {
+    if (!(this->data_current)) {
+        assert(this->data.size() == SIZE);
         // convert the cube bool into the proper x,y,z uint8_t array
         for (int i = 0; i < SIZE; ++i) {
-            assert(this->data[i].size() == SIZE)
+            assert(this->data[i].size() == SIZE);
             for (int j = 0; j < SIZE; ++j) {
-                assert(this->data[i][j].size() == SIZE)
+                assert(this->data[i][j].size() == SIZE);
                 for (int k = 0; k < SIZE; ++k) {
                     this->cube_pass[k][j] += this->data[i][j][k] << i;
                 }
@@ -189,3 +233,5 @@ void LEDCube::setVoxel(float x, float y, float z, bool on, float scale) {
     this->data[int(x/scale + 0.5)][int(y/scale + 0.5)][int(z/scale + 0.5)] = on;
 }
 
+
+#endif

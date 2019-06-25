@@ -3,42 +3,50 @@
  * do whatever teh crap you want with this software
  * just mention my name if you use it, bitte
  *
- * Author: Joshua Petrin <joshua.m.petrin@vanderbilt.edu>
+ * @author Joshua Petrin <joshua.m.petrin@vanderbilt.edu>
  */
 
+#ifndef LEDCUBE_H_
+#define LEDCUBE_H_
 
+#include <chrono>
 #include <memory>
+#include <mutex>
+#include <thread>
 #include <vector>
 #include <cstdint>
 
 #include <serial/serial.h>
-#include "timercpp.h"
+#include "Animation.h"
 
 
 using namespace std;
 
 
-virtual class Animation {
-private:
-    int frame;
-
-public:
-    void next(LEDCube* cube) = 0;
-};
+// forward declaration
+class Animation;
 
 
 class LEDCube {
 private:
-    Timer timer;
+    thread render_thread;
+    bool thread_pause;
+    bool thread_kill;
+    function<void(void)> render_function;  //< called every `1/framerate` seconds.
+                                           //< handed to the `render_thread` thread.
     int framerate;
     vector<vector<vector<bool>>> data;
     string magic;
+    uint8_t* usb_message;
 
     bool data_current;  //< true if the data in the `cube_pass` array represents
                         //< what is in the `data` array.
     vector<vector<uint8_t>> cube_pass;
     shared_ptr<serial::Serial> usb;
-    Animation animation;
+
+    mutex render_lock;
+    thread::id blocking_thread;
+
 
     static LEDCube* instance;
 
@@ -50,7 +58,6 @@ private:
         string magic = "JANDY");
     
     const LEDCube& operator=(const LEDCube&);
-
     
     /**
      * Send data the to the cube's Arduino. 
@@ -59,31 +66,94 @@ private:
      * with `this->magic` at the front and `'\n'` at the end. Then sends the data to
      * the Arduino.
      */
-    void usbSend() const;
+    void usbSend();
+
+
+    /**
+     * Lock the cube for writing data. If the cube is already locked, this
+     * method will block the current thread's execution.
+     * @warning You <b>must</b> call `unlock` for the cube to continue 
+     *          broadcasting to the USB!! This method locks the mutex 
+     *          of the render thread (ensuring its data won't change 
+     *          midway in transmission), so it must be unlocked for the
+     *          data to be accessed again.
+     */
+    void lock();
+
+    /**
+     * @return `true` if the cube is locked, `false` if not
+     */
+    bool isLocked() const;
+
+    /**
+     * Unlock the cube for writing data. If the cube is already unlocked,
+     * does nothing.
+     * @warning You <b>must</b> call `unlock` for the cube to continue 
+     *          broadcasting to the USB!! This method locks the mutex 
+     *          of the render thread (ensuring its data won't change 
+     *          midway in transmission), so it must be unlocked for the
+     *          data to be accessed again.
+     */
+    void unlock();
+
+    friend Animation;
+
 
 public:
 
     ~LEDCube();
 
+    /**
+     * Returns the current instance of the cube. Returns `nullptr` if there has
+     * been no instance created or if the cube has been destroyed.
+     * 
+     * @return The instance of the cube; `nullptr` if it does not exist.
+     */
     static LEDCube* getInstance();
 
+    /**
+     * Returns a new instance of the cube with the given parameters if there 
+     * doesn't already exist none; otherwise ignores all parameters and returns
+     * the current instance of the cube.
+     * @param  usb       a `shared_ptr` to a `serial::Serial` object, which is 
+     *                   where the LEDCube will broadcast to.
+     * @param  framerate The desired framerate of the cube.
+     * @param  magic     The magic bytes placed at the beginning of a 
+     *                   transmission.
+     * @return           The instance of the cube (new or old)
+     */
     static LEDCube* getInstance(
         shared_ptr<serial::Serial> usb, 
         int framerate = 60, 
         string magic = "JANDY");
 
-    void start();
 
-    void stop();
+    /**
+     * Begin broadcasting serial signals to the serial::Serial object at the
+     * set `framerate`.
+     * 
+     * The data will begin to lock intermittently when this method is
+     * called.
+     */
+    void startBroadcast();
+
+    /**
+     * Stop broadcasting to the serial::Serial object.
+     *
+     * The data is guaranteed to no longer be locked after this method is 
+     * called.
+     */
+    void pauseBroadcast();
+
+    /**
+     * @return `true` if the cube is broadcasting, `false` if it is not.
+     */
+    bool isBroadcasting();
 
     /**
      * Set the rate at which data is sent to the cube.
-     *
-     * @warning Calling this function will cause the timer thread to stop
-     *          and restart.
-     * @warning Setting this too high will cause corrput data to be sent
-     *          to the cube.
-     * 
+     * @warning         Setting the framerate too high will cause corrput data 
+     *                  to be sent to the cube.
      * @param framerate The desired framerate.
      */
     void setFramerate(int framerate);
@@ -93,22 +163,18 @@ public:
      */
     int getFramerate() const;
 
-
-    void setAnimation(Animation &a);
-
-    Animation& getAnimation() const; 
-
-
     /**
+     * Return a copy of the queued state of the cube.
+     *
      * @return The bool array that represents the current state of the cube.
      */
-    vector<vector<vector<bool>>>& getCube() const;
+    vector<vector<vector<bool>>>& getCube();
 
     /**
      * @return The byte data that will be sent to the Arduino over USB, given
      *         the current state of the cube.
      */
-    vector<vector<uint8_t>>& getCubeData() const;
+    const vector<vector<uint8_t>>& getCubeData();
 
 
     void clearCube();
@@ -201,3 +267,6 @@ public:
         float scale = 1.0f);
 
 };
+
+
+#endif
