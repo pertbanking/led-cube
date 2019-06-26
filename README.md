@@ -14,12 +14,10 @@ You will need the following software:
     - For everyone else, `g++` is probably on your command line already.
 - CMake
     - https://cmake.org/download/
-- `serial`: https://github.com/wjwwood/serial . Pull this repo into the `pi` directory (shown below).
 
 In the command line and in the root directory,
 ```
 > cd pi
-> git clone https://github.com/wjwwood/serial.git
 > mkdir build
 > cd build
 > cmake ..
