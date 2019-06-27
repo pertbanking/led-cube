@@ -57,6 +57,8 @@ private:
         int framerate = 60, 
         string magic = "JANDY");
     
+    ~LEDCube();  // only allow the static destroyInstance() function
+
     const LEDCube& operator=(const LEDCube&);
     
     /**
@@ -101,7 +103,6 @@ private:
 
 public:
 
-    ~LEDCube();
 
     /**
      * Returns the current instance of the cube. Returns `nullptr` if there has
@@ -126,6 +127,8 @@ public:
         shared_ptr<serial::Serial> usb, 
         int framerate = 60, 
         string magic = "JANDY");
+
+    static void destroyInstance();
 
 
     /**
@@ -177,7 +180,7 @@ public:
     const vector<vector<uint8_t>>& getCubeData();
 
 
-    void clearCube();
+    void clear();
 
     void setVoxel(float x, float y, float z, bool on, float scale = 1.0f);
 
@@ -201,6 +204,12 @@ public:
         float y1, 
         float z1,
         float scale = 1.0f);
+
+    void drawXPlane(uint8_t x);
+
+    void drawYPlane(uint8_t y);
+    
+    void drawZPlane(uint8_t z);
 
     void drawSphere(
         uint8_t x, 

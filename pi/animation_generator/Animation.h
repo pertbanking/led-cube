@@ -26,12 +26,16 @@ private:
     const string name;
 
 protected:
+
+    int recommendedFramerate;  //< The recommended framerate for this animation
+    
     /**
      * Override this method to make your own animations!
      *
      * Note that this is different from the `next()` method because this one
      * does not deal with the cube's mutex. This is a more pure implementation.
-     * @warning    Do not override the `next()` method. Override this method.
+     * @warning    Do not override the `next()` method. Override this method
+     *             instead.
      * @warning    If your animation is too slow, the FPS of the cube will be
      *             affected. Make sure you have a fast way to calculate
      *             successive frames.
@@ -50,12 +54,14 @@ protected:
         this->rest = frames;
     }
 
-public:
+    // protect the constructors because only real animations should have access.
+    Animation() : name(), frame(0), rest(0), recommendedFramerate(50) {}
 
-    Animation() = default;
-    Animation(string name) : name(name), frame(0), rest(0) {}
+    Animation(string name) : name(name), frame(0), rest(0), recommendedFramerate(50) {}
+
     ~Animation() = default;
 
+public:
     /**
      * Steps this animation forward. 
      * 
@@ -65,11 +71,18 @@ public:
     void next(LEDCube* cube);
 
     /**
+     * @return The recommended framerate for this animation.
+     */
+    int getRecommendedFramerate() const {
+        return recommendedFramerate;
+    }
+
+    /**
      * The current frame of the cube.
      *
      * Note that when the animation is initialized, the frame begins at 0,
-     * and the first `next()` that is called 
-     * @return 
+     * and the first `next()` that is called is frame 1.
+     * @return The frame of this animation
      */
     int getFrame() const {
         return this->frame;

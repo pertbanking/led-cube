@@ -7,13 +7,14 @@
  */
 
 #include <algorithm>
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <random>
-#include <vector>
-#include <cstdint>
-#include <chrono>
 #include <thread>
+#include <vector>
+#include <cstdio>
+#include <cstdint>
 
 #include "LEDCube.h"
 #include <serial/serial.h>
@@ -37,6 +38,10 @@ shared_ptr<serial::Serial> usb;
 
 
 int main(int argc, char* argv[]) {
+
+    LEDCube* cube = LEDCube::getInstance(usb);
+    
+
     if (argc > 1) {
         usb_port = argv[1];
     }
@@ -57,6 +62,7 @@ int main(int argc, char* argv[]) {
     }
     catch (serial::IOException& e) {
         std::cout << "Could not open port at " << usb_port << "." << std::endl;
+        LEDCube::destroyInstance();
         return 1;
     }
 
@@ -80,7 +86,7 @@ int main(int argc, char* argv[]) {
         std::uniform_real_distribution<double> drop_placer(0.0, 8.0);
 
         // start the simple rain animation
-        // t.setInterval([&]() {
+        // t.setInterval([=]() {
         //     // send the cube
         //     usb_write_cube();
 
@@ -120,12 +126,11 @@ int main(int argc, char* argv[]) {
         // }, int(1000.0 / double(fps))); 
 
 
-        LEDCube* cube = LEDCube::getInstance(usb);
-
         while(threadalive) ;  // keep this thread alive
+        
+        LEDCube::destroyInstance();
 
         return 0;
     }
-
 }
 
