@@ -9,9 +9,10 @@ I use an Arduino and for rendering the cube. The Arduino receives USB signals fr
 
 ## Installation Instructions
 You will need the following software:
-- A C++ compiler
-    - For Windows, MinGW is good: https://osdn.net/projects/mingw/releases/
-    - For everyone else, `g++` is probably on your command line already.
+- A C++ compiler + Make
+    - For Windows, MinGW works. Just select to install `g++` and `make` in the installer: https://osdn.net/projects/mingw/releases/
+    - For Mac, I found this: https://github.com/kennethreitz/osx-gcc-installer
+    - For everyone else, `g++` and `make` are probably on your command line already.
 - CMake
     - https://cmake.org/download/
 
