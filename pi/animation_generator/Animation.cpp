@@ -14,12 +14,12 @@
 
 
 void Animation::next(LEDCube* cube) {
-    if (this->rest <= 0) {
+    if (this->restDuration <= 0) {
         cube->lock();
-        this->_next(cube);
+        this->calculateNext(cube);
         cube->unlock();
     } else {
-        --this->rest;
+        --this->restDuration;
     }
     ++this->frame;
 }

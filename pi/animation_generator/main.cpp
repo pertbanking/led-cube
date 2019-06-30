@@ -20,6 +20,7 @@
 #include <serial/serial.h>
 
 #include "animations/Rain.cpp"
+#include "animations/PlaneWop.cpp"
 
 
 // the cube as a bool array
@@ -77,23 +78,40 @@ int main(int argc, char* argv[]) {
         cube->startBroadcast();
         std::cout << "Live." << std::endl;
 
-        int framesduration = 100000;
-        
-        Rain rain_ani;  // the rain animation
-        while (rain_ani.getFrame() < framesduration) {
-            if (rain_ani.getFrame() == 1)
-                std::cout << "Starting animation " 
-                          << rain_ani.getName() 
-                          << "." 
-                          << std::endl;
+        int repeats = 10;
 
-            rain_ani.next(cube);  // @REXFORD: NOTE THIS SYNTAX!!
-            // sleeeeeep for however long the animation recommends us
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(
-                    int(1000.0 / float(rain_ani.getRecommendedFramerate()))
-                    )
-                );
+        while (repeats) {
+            int framesduration = 1000;
+            Rain rain_ani;  // the rain animation
+            std::cout << "Starting animation " 
+                      << rain_ani.getName() 
+                      << "." 
+                      << std::endl;
+            while (rain_ani.getFrame() < framesduration) {
+                rain_ani.next(cube);  // @REXFORD: NOTE THIS SYNTAX!!
+                // sleeeeeep for however long the animation recommends us
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(
+                        int(1000.0 / float(rain_ani.getRecommendedFramerate()))
+                        )
+                    );
+            }
+
+            framesduration = 1000;
+            PlaneWop planewop_ani;
+            std::cout << "Starting animation " 
+                      << planewop_ani.getName() 
+                      << "." 
+                      << std::endl;
+            while (planewop_ani.getFrame() < framesduration) {
+                planewop_ani.next(cube);
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(
+                        int(1000.0 / float(planewop_ani.getRecommendedFramerate()))
+                        )
+                    );
+            }
+            --repeats;
         }
 
         // clean up the cube instance

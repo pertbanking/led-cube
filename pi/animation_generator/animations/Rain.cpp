@@ -16,6 +16,8 @@
 #include <vector>
 
 
+const std::string RAIN_NAME = "Rain";
+
 class Rain : public Animation {
 private:
     // initialize private variables here
@@ -26,7 +28,7 @@ private:
 
 public:
     Rain()
-    : Animation("Rain")  // make sure to call this previous constructor with
+    : Animation(RAIN_NAME)  // make sure to call this previous constructor with
                          // its name designation, as shown.
     , drops()
     , generator()
@@ -35,7 +37,7 @@ public:
         this->recommendedFramerate = 60;
     }
 
-    void _next(LEDCube* cube) {  // override _next(), NOT next().
+    void calculateNext(LEDCube* cube) {  // override _next(), NOT next().
 
         // clear the cube
         cube->clear();

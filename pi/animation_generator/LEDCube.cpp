@@ -80,15 +80,17 @@ LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
             // TODO: Have a non-static wait period.
             // get the lock in the scope, so when it gets destroyed, we release
             // the mutex.
-            std::unique_lock<std::mutex> rendering_lock(
-                this->render_start_m, 
-                std::defer_lock
-            );
-            this->transmit_cv.wait(
-                rendering_lock, 
-                [this]() -> bool { return !this->thread_pause; }
-            );
-            this->usbSend();
+            {
+                std::unique_lock<std::mutex> rendering_lock(
+                    this->render_start_m, 
+                    std::defer_lock
+                );
+                this->transmit_cv.wait(
+                    rendering_lock, 
+                    [this]() -> bool { return !this->thread_pause; }
+                );
+                this->usbSend();
+            }
             this->transmit_cv.notify_one();
 
             if (this->thread_kill)
@@ -101,6 +103,7 @@ LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
             );
         }
     });
+    
     render_thread.detach();
 
     usb_message[magic.size() + CUBE_SIZE*CUBE_SIZE] = '\n';

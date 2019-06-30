@@ -22,7 +22,7 @@ class LEDCube;
 class Animation {
 private:
     int frame;
-    int rest;
+    int restDuration;
     const string name;
 
 protected:
@@ -35,7 +35,7 @@ protected:
      * Override this method to make your own animations!
      *
      * Note that this is different from the `next()` method because this one
-     * does not deal with the cube's mutex. This is a more pure implementation.
+     * does not deal with the cube's mutex. This is more pure.
      * @warning    Do not override the `next()` method. Override this method
      *             instead.
      * @warning    If your animation is too slow, the FPS of the cube will be
@@ -46,20 +46,20 @@ protected:
      * @param cube The current instance of the cube. Use this pointer to
      *             make changes within the animation.
      */
-    virtual void _next(LEDCube* cube) = 0;
+    virtual void calculateNext(LEDCube* cube) = 0;
 
     /**
      * Set the animation to rest for a set number of frames.
      * @param frames The number of frames to rest for.
      */
-    void _rest(int frames) {
-        this->rest = frames;
+    void rest(int frames) {
+        this->restDuration = (frames < 0)? 0 : frames;
     }
 
     // protect the constructors because only real animations should have access.
-    Animation() : name(), frame(0), rest(0), recommendedFramerate(50) {}
+    Animation() : name(), frame(0), restDuration(0), recommendedFramerate(50) {}
 
-    Animation(string name) : name(name), frame(0), rest(0), recommendedFramerate(50) {}
+    Animation(string name) : name(name), frame(0), restDuration(0), recommendedFramerate(50) {}
 
     ~Animation() = default;
 

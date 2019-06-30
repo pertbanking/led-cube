@@ -12,6 +12,7 @@ add_executable(animate
 	animation_generator/LEDCube.cpp
 	animation_generator/Animation.cpp
 	animation_generator/animations/Rain.cpp
+	animation_generator/animations/PlaneWop.cpp
 )
 target_link_libraries(animate serial)
 
