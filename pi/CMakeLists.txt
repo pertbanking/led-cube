@@ -6,6 +6,7 @@ set(CMAKE_BUILD_TYPE Release)
 project(animate)
 
 add_subdirectory(serial)
+include_directories ("${PROJECT_SOURCE_DIR}/serial/include")
 
 add_executable(animate
 	animation_generator/main.cpp
@@ -14,6 +15,6 @@ add_executable(animate
 	animation_generator/animations/Rain.cpp
 	animation_generator/animations/PlaneWop.cpp
 )
-target_link_libraries(animate serial)
+target_link_libraries(animate ${CMAKE_SOURCE_DIR}/build/serial/libserial.a pthread rt)
 
 install(TARGETS animate DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
