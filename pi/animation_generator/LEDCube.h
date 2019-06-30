@@ -9,6 +9,7 @@
 #ifndef LEDCUBE_H_
 #define LEDCUBE_H_
 
+#include <condition_variable>
 #include <chrono>
 #include <memory>
 #include <mutex>
@@ -29,23 +30,33 @@ class Animation;
 
 class LEDCube {
 private:
-    thread render_thread;
-    bool thread_pause;
-    bool thread_kill;
-    function<void(void)> render_function;  //< called every `1/framerate` seconds.
-                                           //< handed to the `render_thread` thread.
+
     int framerate;
-    vector<vector<vector<bool>>> data;
-    string magic;
+    std::vector<std::vector<std::vector<bool>>> data;
+    std::string magic;
     uint8_t* usb_message;
 
     bool data_current;  //< true if the data in the `cube_pass` array represents
                         //< what is in the `data` array.
-    vector<vector<uint8_t>> cube_pass;
-    shared_ptr<serial::Serial> usb;
+    std::vector<std::vector<uint8_t>> cube_pass;
+    std::shared_ptr<serial::Serial> usb;
 
-    mutex render_lock;
-    thread::id blocking_thread;
+    std::thread render_thread;
+    // the data_m mutex is shared between the data_lock and broadcast_lock
+    // it's used to ensure the cube data is accessed one-at-a-time between the
+    // USB thread and the animation thread.
+    std::mutex data_m;
+    std::unique_lock<std::mutex> data_lock;
+    std::unique_lock<std::mutex> broadcast_lock;
+
+    // the render_start_m mutex is used only by the transmit_cv condition_variable.
+    // it is used to halt the render thread at the stopBreadcast() call and 
+    // continue it at the startBroadcast() call.
+    std::mutex render_start_m;
+    std::unique_lock<std::mutex> render_start_lock;
+    std::condition_variable transmit_cv;
+    bool thread_pause;
+    bool thread_kill;
 
 
     static LEDCube* instance;
@@ -54,8 +65,8 @@ private:
     LEDCube(const LEDCube&);
     LEDCube(
         shared_ptr<serial::Serial>& usb, 
-        int framerate = 60, 
-        string magic = "JANDY");
+        int framerate, 
+        string magic);
     
     ~LEDCube();  // only allow the static destroyInstance() function
 
@@ -70,7 +81,6 @@ private:
      */
     void usbSend();
 
-
     /**
      * Lock the cube for writing data. If the cube is already locked, this
      * method will block the current thread's execution.
@@ -80,12 +90,7 @@ private:
      *          midway in transmission), so it must be unlocked for the
      *          data to be accessed again.
      */
-    void lock();
-
-    /**
-     * @return `true` if the cube is locked, `false` if not
-     */
-    bool isLocked() const;
+    void broadcastLock();
 
     /**
      * Unlock the cube for writing data. If the cube is already unlocked,
@@ -96,9 +101,7 @@ private:
      *          midway in transmission), so it must be unlocked for the
      *          data to be accessed again.
      */
-    void unlock();
-
-    friend Animation;
+    void broadcastUnlock();
 
 
 public:
@@ -154,6 +157,29 @@ public:
     bool isBroadcasting();
 
     /**
+     * Lock the cube for writing data. If the cube is already locked, this
+     * method will block the current thread's execution.
+     * @warning You <b>must</b> call `unlock` for the cube to continue 
+     *          broadcasting to the USB!! This method locks the mutex 
+     *          of the render thread (ensuring its data won't change 
+     *          midway in transmission), so it must be unlocked for the
+     *          data to be accessed again.
+     */
+    void lock();
+
+    /**
+     * Unlock the cube for writing data. If the cube is already unlocked,
+     * does nothing.
+     * @warning You <b>must</b> call `unlock` for the cube to continue 
+     *          broadcasting to the USB!! This method locks the mutex 
+     *          of the render thread (ensuring its data won't change 
+     *          midway in transmission), so it must be unlocked for the
+     *          data to be accessed again.
+     */
+    void unlock();
+
+
+    /**
      * Set the rate at which data is sent to the cube.
      * @warning         Setting the framerate too high will cause corrput data 
      *                  to be sent to the cube.
@@ -180,8 +206,25 @@ public:
     const vector<vector<uint8_t>>& getCubeData();
 
 
+    /**
+     * Clears the cube. Sets all pixel values to `false`.
+     */
     void clear();
 
+    /**
+     * Sets the specified pixel value to the value of `on`. 
+     * 
+     * The `x`, `y`, and `z` parameters are used as coordinates in the cube 
+     * by dividing each by `scale` and rounding them off to the nearest integer.
+     * For instance, if `500.0, 350.0, 125.0` are input as `x,y,z` and `100.0`
+     * is input as the `scale`, then the voxel at `(5,4,1)` will be set to the
+     * value of `on`.
+     * @param x     x-coord
+     * @param y     y-coord
+     * @param z     z-coord
+     * @param on    The value of the voxel to be set
+     * @param scale The scale of the coordinates (optional)
+     */
     void setVoxel(float x, float y, float z, bool on, float scale = 1.0f);
 
     void setVoxel(uint8_t x, uint8_t y, uint8_t z, bool on);

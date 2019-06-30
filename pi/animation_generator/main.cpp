@@ -19,6 +19,7 @@
 #include "LEDCube.h"
 #include <serial/serial.h>
 
+#include "animations/Rain.cpp"
 
 
 // the cube as a bool array
@@ -38,9 +39,6 @@ shared_ptr<serial::Serial> usb;
 
 
 int main(int argc, char* argv[]) {
-
-    LEDCube* cube = LEDCube::getInstance(usb);
-    
 
     if (argc > 1) {
         usb_port = argv[1];
@@ -68,22 +66,48 @@ int main(int argc, char* argv[]) {
 
     if (usb->isOpen())
     {
-        // usb->write("Initializing\n");
+        LEDCube* cube = LEDCube::getInstance(usb);
+
         std::cout << "Sleeping for 2 seconds..." << std::endl;
-        // this sleep is essential. if the arduino receives serial before it
-        // initializes, it will never enter program control.
+        // this sleep is essential. if the arduino receives serial signals 
+        // before it initializes, it will never enter program control.
         std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+        // start the cube's broadcast to the usb
+        cube->startBroadcast();
         std::cout << "Live." << std::endl;
 
-        // TODO: place in an animation
         int framesduration = 100000;
-        bool threadalive = true;
-        int frame = 0;
-        int rest = 10;
-        std::vector<std::vector<double>> drops;  // drops in the cube
-        std::default_random_engine generator;
-        std::uniform_int_distribution<int> drop_generator(1, 10);
-        std::uniform_real_distribution<double> drop_placer(0.0, 8.0);
+        
+        Rain rain_ani;  // the rain animation
+        while (rain_ani.getFrame() < framesduration) {
+            if (rain_ani.getFrame() == 1)
+                std::cout << "Starting animation " 
+                          << rain_ani.getName() 
+                          << "." 
+                          << std::endl;
+
+            rain_ani.next(cube);  // @REXFORD: NOTE THIS SYNTAX!!
+            // sleeeeeep for however long the animation recommends us
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(
+                    int(1000.0 / float(rain_ani.getRecommendedFramerate()))
+                    )
+                );
+        }
+
+        // clean up the cube instance
+        std::cout << "Destroying LEDCube instance..." << std::endl;
+        LEDCube::destroyInstance();
+        std::cout << "Done." << std::endl;
+        return 0;
+
+        // int frame = 0;
+        // int rest = 10;
+        // std::vector<std::vector<double>> drops;  // drops in the cube
+        // std::default_random_engine generator;
+        // std::uniform_int_distribution<int> drop_generator(1, 10);
+        // std::uniform_real_distribution<double> drop_placer(0.0, 8.0);
 
         // start the simple rain animation
         // t.setInterval([=]() {
@@ -124,13 +148,7 @@ int main(int argc, char* argv[]) {
         //     ++frame;
 
         // }, int(1000.0 / double(fps))); 
-
-
-        while(threadalive) ;  // keep this thread alive
         
-        LEDCube::destroyInstance();
-
-        return 0;
     }
 }
 

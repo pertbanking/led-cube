@@ -29,6 +29,8 @@ protected:
 
     int recommendedFramerate;  //< The recommended framerate for this animation
     
+
+    // TODO: Come up with a better naming convention.
     /**
      * Override this method to make your own animations!
      *
