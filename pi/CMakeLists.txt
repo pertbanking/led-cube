@@ -18,7 +18,7 @@ add_executable(
 
 target_include_directories(animate PUBLIC "${PROJECT_SOURCE_DIR}/serial/include")
 
-target_link_libraries(animate serial "${CMAKE_SOURCE_DIR}/build/serial/libserial.a" pthread rt)
+target_link_libraries(animate serial)
 
 set_target_properties(animate
     PROPERTIES
