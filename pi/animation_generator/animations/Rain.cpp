@@ -37,7 +37,7 @@ public:
         this->recommendedFramerate = 60;
     }
 
-    void calculateNext(LEDCube* cube) {  // override _next(), NOT next().
+    void calculateNext(LEDCube* cube) {  // override calculateNext(), NOT next().
 
         // clear the cube
         cube->clear();
@@ -59,6 +59,11 @@ public:
             cube->voxelOn(drip[0], drip[1], drip[2]);
             drip[2] -= 0.25;  // drops loose 0.14 height every 1/fps secs (8.4 @60fps, 4.2 @30fps)
         });
+    }
+
+    void reset() {
+        // empty the drops vector
+        drops = std::vector<std::vector<float>>();
     }
 };
 
