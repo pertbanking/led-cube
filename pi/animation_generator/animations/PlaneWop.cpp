@@ -37,8 +37,9 @@ public:
         else
             --layer;
 
-        if (layer == 7)
+        if (layer == 7) {
             up = false;
+        }
         if (layer == 0 && !up) {
             planedir = (planedir + 1) % 3;
             up = true;
@@ -50,7 +51,12 @@ public:
             cube->drawYPlane(layer);
         else
             cube->drawXPlane(layer);
-        // this->rest(0);
+        // this->rest(1);
+    }
+
+    void reset() {
+        planedir = 0;
+        layer = 0;
     }
 };
 

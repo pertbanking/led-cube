@@ -21,6 +21,7 @@
 
 #include "animations/Rain.cpp"
 #include "animations/PlaneWop.cpp"
+#include "animations/Fireworks.cpp"
 
 
 // the cube as a bool array
@@ -81,7 +82,23 @@ int main(int argc, char* argv[]) {
         int repeats = 10;
 
         while (repeats) {
-            int framesduration = 1000;
+            int framesduration = 2000;
+            Fireworks f_ani;  // the rain animation
+            std::cout << "Starting animation " 
+                      << f_ani.getName() 
+                      << "." 
+                      << std::endl;
+            while (f_ani.getFrame() < framesduration) {
+                f_ani.next(cube);  // @REXFORD: NOTE THIS SYNTAX!!
+                // sleeeeeep for however long the animation recommends us
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(
+                        int(1000.0 / float(f_ani.getRecommendedFramerate()))
+                        )
+                    );
+            }
+
+            framesduration = 800;
             Rain rain_ani;  // the rain animation
             std::cout << "Starting animation " 
                       << rain_ani.getName() 
@@ -97,7 +114,7 @@ int main(int argc, char* argv[]) {
                     );
             }
 
-            framesduration = 1000;
+            framesduration = 800;
             PlaneWop planewop_ani;
             std::cout << "Starting animation " 
                       << planewop_ani.getName() 

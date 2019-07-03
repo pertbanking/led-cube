@@ -25,6 +25,9 @@ private:
     int restDuration;
     const string name;
 
+    // you can't use this constructor!
+    Animation();
+
 protected:
 
     int recommendedFramerate;  //< The recommended framerate for this animation
@@ -57,9 +60,11 @@ protected:
     }
 
     // protect the constructors because only real animations should have access.
-    Animation() : name(), frame(0), restDuration(0), recommendedFramerate(50) {}
-
-    Animation(string name) : name(name), frame(0), restDuration(0), recommendedFramerate(50) {}
+    Animation(string name = "", int recommededFramerate = 50) 
+    : name(name)
+    , frame(0)
+    , restDuration(0)
+    , recommendedFramerate(recommendedFramerate) {}
 
     ~Animation() = default;
 
@@ -71,6 +76,13 @@ public:
      * @param cube The `cube` instance.
      */
     void next(LEDCube* cube);
+
+    /**
+     * Resets the animation to its beginning state. 
+     * 
+     * Every animation must override this method.
+     */
+    virtual void reset() = 0;
 
     /**
      * @return The recommended framerate for this animation.

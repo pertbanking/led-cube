@@ -19,11 +19,15 @@
 #include <vector>
 #include <cassert>
 #include <cstdint>
+#include <cstdio>
 
 #include <serial/serial.h>
 
 
 using namespace std;
+
+// comment out to squelch debug messages to the console.
+// #define CUBE_DEBUG
 
 
 // ==================================
@@ -103,7 +107,7 @@ LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
             );
         }
     });
-    
+
     render_thread.detach();
 
     usb_message[magic.size() + CUBE_SIZE*CUBE_SIZE] = '\n';
@@ -241,6 +245,17 @@ const vector<vector<uint8_t>>& LEDCube::getCubeData() {
             }
         }
     }
+
+    #ifdef CUBE_DEBUG
+    for (int i = CUBE_SIZE-1; i >= 0; --i) {
+        for (int j = 0; j < CUBE_SIZE; ++j) {
+            printf(" %X", cube_pass[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    #endif
+
     return this->cube_pass;
 }
 
