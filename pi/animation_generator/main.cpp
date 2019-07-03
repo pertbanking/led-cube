@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
         int repeats = 10;
 
         while (repeats) {
-            int framesduration = 1000;
+            int framesduration = 10000;
             Fireworks f_ani;  // the rain animation
             std::cout << "Starting animation " 
                       << f_ani.getName() 

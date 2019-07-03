@@ -31,7 +31,7 @@ public:
     : Animation(RAIN_NAME)  // make sure to call this previous constructor with
                          // its name designation, as shown.
     , drops()
-    , generator()
+    , generator(std::chrono::system_clock::now().time_since_epoch().count())
     , drop_generator(1, 10)
     , drop_placer(0.0, 7.4) {
         this->recommendedFramerate = 60;

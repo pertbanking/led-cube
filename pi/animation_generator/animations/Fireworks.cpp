@@ -45,17 +45,18 @@ private:
             float p = debris_phi(gen);
             float s = debris_speed(gen);
 
-            debris.push_back(std::make_tuple(
-                std::get<0>(rockets[index]), 
-                std::get<1>(rockets[index]), 
-                std::get<2>(rockets[index]),
-                s*sin(p)*cos(t),
-                s*sin(p)*sin(t),
-                s*cos(p),
-                debris_life(gen)
-            ));
+            debris.push_back(
+                std::tuple<float,float,float,float,float,float,int> {
+                    std::get<0>(rockets[index]), 
+                    std::get<1>(rockets[index]), 
+                    std::get<2>(rockets[index]),
+                    s*sin(p)*cos(t),
+                    s*sin(p)*sin(t),
+                    s*cos(p),
+                    debris_life(gen)
+                }
+            );
         }
-        rockets.erase(rockets.begin() + index);
     }
 
 public:
@@ -63,7 +64,7 @@ public:
     : Animation(FIREWORKS_NAME)
     , rockets()
     , debris()
-    , gen()
+    , gen(std::chrono::system_clock::now().time_since_epoch().count())
     , rocket_generator(1, 100)
     , rocket_placer(3.5, 5.5) 
     , rocket_exploder(1, 100)
@@ -71,7 +72,7 @@ public:
     , debris_phi(M_PI_2, 0.4)
     , debris_theta(0.0, 2.0 * M_PI)
     , debris_speed(0.2, 0.8)
-    , debris_life(30, 100) {
+    , debris_life(10, 25) {
         this->recommendedFramerate = 50;
     }
 
@@ -81,7 +82,7 @@ public:
         // clear the cube
         cube->clear();
 
-        if (rocket_generator(gen) > 95) {  // 4/100 chance of making a rocket
+        if (rocket_generator(gen) > 97) {  // 3/100 chance of a rocket each frame
             // make a new rocket
             rockets.push_back(std::tuple<float,float,float> { 
                 rocket_placer(gen),
@@ -94,35 +95,52 @@ public:
         for (auto i = rockets.begin(); i != rockets.end(); ++i) {
             if (std::get<2>(*i) > 5.5) {
                 this->explodeRocket(i - rockets.begin());
-            } else if (std::get<2>(*i) > 3.0 && rocket_exploder(gen) > 80) {
-                // explode with prob. 19/100 each frame from 3 to 5.5 
+                rockets.erase(i);
+                --i;
+            } else if (std::get<2>(*i) > 3.0 && rocket_exploder(gen) > 93) {
+                // explode with prob. 6/100 each frame from 3 to 5.5 
                 this->explodeRocket(i - rockets.begin());
-            }
-            std::get<2>(*i) += ROCKET_SPEED;
+                rockets.erase(i);
+                --i;
+            } else {
+                std::get<2>(*i) += ROCKET_SPEED;
 
-            if (std::get<0>(*i) > -0.51 && std::get<0>(*i) < 7.49
-                && std::get<1>(*i) > -0.51 && std::get<1>(*i) < 7.49
-                && std::get<2>(*i) > -0.51 && std::get<2>(*i) < 7.49) {
-                // draw the rocket if it's in the cube
-                cube->voxelOn(std::get<0>(*i), std::get<1>(*i), std::get<2>(*i));
+                if (std::get<0>(*i) > -0.49 && std::get<0>(*i) < 7.49
+                    && std::get<1>(*i) > -0.49 && std::get<1>(*i) < 7.49
+                    && std::get<2>(*i) > -0.49 && std::get<2>(*i) < 7.49) {
+                    // draw the rocket if it's in the cube
+                    cube->voxelOn(std::get<0>(*i), std::get<1>(*i), std::get<2>(*i));
+                }
             }
         }
 
         // advance the debris
         for (auto i = debris.begin(); i != debris.end(); ++i) {
+            if (std::get<6>(*i) <= 0){
+                debris.erase(i);
+                --i;
+                continue;
+            } else {
+                --std::get<6>(*i);
+            }
             std::get<0>(*i) += std::get<3>(*i);
             std::get<1>(*i) += std::get<4>(*i);
-            std::get<2>(*i) += std::get<5>(*i);
+            std::get<2>(*i) -= std::get<5>(*i);
             std::get<3>(*i) *= 0.8; // air resistance
             std::get<4>(*i) *= 0.8;
             std::get<5>(*i) += 0.02; // gravity
             std::get<5>(*i) *= 0.8;
 
-            if (std::get<0>(*i) > -0.51 && std::get<0>(*i) < 7.49
-                && std::get<1>(*i) > -0.51 && std::get<1>(*i) < 7.49
-                && std::get<2>(*i) > -0.51 && std::get<2>(*i) < 7.49) {
+            if (std::get<0>(*i) > -0.49 && std::get<0>(*i) < 7.49
+                && std::get<1>(*i) > -0.49 && std::get<1>(*i) < 7.49
+                && std::get<2>(*i) > -0.49 && std::get<2>(*i) < 7.49) {
                 // draw the debris if it's in the cube
                 cube->voxelOn(std::get<0>(*i), std::get<1>(*i), std::get<2>(*i));
+            } else if (std::get<0>(*i) <= -0.49 || std::get<0>(*i) >= 7.49
+                || std::get<1>(*i) <= -0.49 || std::get<1>(*i) >= 7.49) {
+                // the debris has traveled outside the cube, so it can't come back
+                debris.erase(i);
+                --i;
             }
         }
     }
