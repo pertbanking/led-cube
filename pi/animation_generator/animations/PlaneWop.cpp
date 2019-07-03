@@ -28,9 +28,21 @@ public:
         this->recommendedFramerate = 50;
     }
 
-    void calculateNext(LEDCube* cube) {  // override _next(), NOT next().
+    void calculateNext(LEDCube* cube) {  // override calculateNext(), NOT next().
         // clear the cube
         cube->clear();
+        
+        if (up)
+            ++layer;
+        else
+            --layer;
+
+        if (layer == 7)
+            up = false;
+        if (layer == 0 && !up) {
+            planedir = (planedir + 1) % 3;
+            up = true;
+        }
 
         if (planedir == 0)
             cube->drawZPlane(layer);
@@ -38,17 +50,7 @@ public:
             cube->drawYPlane(layer);
         else
             cube->drawXPlane(layer);
-        if (layer == 7)
-            up = false;
-        if (layer == 0 && !up) {
-            planedir = (planedir + 1) % 3;
-            up = true;
-        }
-        if (up)
-            ++layer;
-        else
-            --layer;
-        // this->_rest();
+        // this->rest(0);
     }
 };
 
