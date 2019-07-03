@@ -61,7 +61,7 @@ private:
 
 public:
     Fireworks()
-    : Animation(FIREWORKS_NAME)
+    : Animation(FIREWORKS_NAME, 50, 1000)
     , rockets()
     , debris()
     , gen(std::chrono::system_clock::now().time_since_epoch().count())
@@ -72,13 +72,11 @@ public:
     , debris_phi(M_PI_2, 0.4)
     , debris_theta(0.0, 2.0 * M_PI)
     , debris_speed(0.2, 0.8)
-    , debris_life(10, 25) {
-        this->recommendedFramerate = 50;
-    }
+    , debris_life(10, 25) {}
 
 
     void calculateNext(LEDCube* cube) {
-        
+
         // clear the cube
         cube->clear();
 

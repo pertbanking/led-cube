@@ -25,16 +25,19 @@ private:
     std::default_random_engine generator;
     std::uniform_int_distribution<int> drop_generator;
     std::uniform_real_distribution<float> drop_placer;
+    using Animation::recommendedFramerate;
+    using Animation::recommendedDuration;
 
 public:
+    // make sure to call this previous constructor with
+    // its name designation, as shown.
     Rain()
-    : Animation(RAIN_NAME)  // make sure to call this previous constructor with
-                         // its name designation, as shown.
+    : Animation(RAIN_NAME, 60, 1000)  
     , drops()
     , generator(std::chrono::system_clock::now().time_since_epoch().count())
     , drop_generator(1, 10)
     , drop_placer(0.0, 7.4) {
-        this->recommendedFramerate = 60;
+        // this->recommendedFramerate = 60;
     }
 
     void calculateNext(LEDCube* cube) {  // override calculateNext(), NOT next().

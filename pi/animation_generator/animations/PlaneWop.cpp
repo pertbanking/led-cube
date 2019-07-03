@@ -21,12 +21,10 @@ private:
     bool up;
 public:
     PlaneWop()
-    : Animation(PLANEWOP_NAME)
+    : Animation(PLANEWOP_NAME, 50, 1000)
     , planedir(0)
     , layer(0)
-    , up(true) {
-        this->recommendedFramerate = 50;
-    }
+    , up(true) {}
 
     void calculateNext(LEDCube* cube) {  // override calculateNext(), NOT next().
         // clear the cube

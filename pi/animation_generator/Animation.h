@@ -31,9 +31,8 @@ private:
 protected:
 
     int recommendedFramerate;  //< The recommended framerate for this animation
+    int recommendedDuration;   //< The recommended lifetime for this animation
     
-
-    // TODO: Come up with a better naming convention.
     /**
      * Override this method to make your own animations!
      *
@@ -60,11 +59,15 @@ protected:
     }
 
     // protect the constructors because only real animations should have access.
-    Animation(string name = "", int recommededFramerate = 50) 
+    Animation(
+        string name = "", 
+        int recommendedFramerate = 50, 
+        int recommendedDuration = 1000)
     : name(name)
     , frame(0)
     , restDuration(0)
-    , recommendedFramerate(recommendedFramerate) {}
+    , recommendedFramerate(recommendedFramerate)
+    , recommendedDuration(recommendedDuration) {}
 
     ~Animation() = default;
 
@@ -89,6 +92,13 @@ public:
      */
     int getRecommendedFramerate() const {
         return recommendedFramerate;
+    }
+
+    /**
+     * @return The recommended lifespan of this animation (in frames)
+     */
+    int getRecommendedDuration() const {
+        return recommendedDuration;
     }
 
     /**

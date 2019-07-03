@@ -89,13 +89,23 @@ int main(int argc, char* argv[]) {
                       << "." 
                       << std::endl;
             while (f_ani.getFrame() < framesduration) {
-                f_ani.next(cube);  // @REXFORD: NOTE THIS SYNTAX!!
+                // @REXFORD: NOTE THIS SYNTAX!!
+                
+                // get the current time
+                auto start = std::chrono::system_clock::now();
+
+                f_ani.next(cube);
+
+                // get the current time after the frame calculation
+                auto stop = std::chrono::system_clock::now();
+                
                 // sleeeeeep for however long the animation recommends us
+                double duration = 1000000.0 / double(f_ani.getRecommendedFramerate())
+                    - std::chrono::duration<double, std::micro>(stop - start).count();
+                
                 std::this_thread::sleep_for(
-                    std::chrono::milliseconds(
-                        int(1000.0 / float(f_ani.getRecommendedFramerate()))
-                        )
-                    );
+                    std::chrono::microseconds(int(duration))
+                );
             }
 
             framesduration = 800;
@@ -105,13 +115,21 @@ int main(int argc, char* argv[]) {
                       << "." 
                       << std::endl;
             while (rain_ani.getFrame() < framesduration) {
-                rain_ani.next(cube);  // @REXFORD: NOTE THIS SYNTAX!!
+                // get the current time
+                auto start = std::chrono::system_clock::now();
+
+                rain_ani.next(cube);
+
+                // get the current time after the frame calculation
+                auto stop = std::chrono::system_clock::now();
+                
                 // sleeeeeep for however long the animation recommends us
+                double duration = 1000000.0 / double(f_ani.getRecommendedFramerate())
+                    - std::chrono::duration<double, std::micro>(stop - start).count();
+
                 std::this_thread::sleep_for(
-                    std::chrono::milliseconds(
-                        int(1000.0 / float(rain_ani.getRecommendedFramerate()))
-                        )
-                    );
+                    std::chrono::microseconds(int(duration))
+                );
             }
 
             framesduration = 800;
@@ -121,12 +139,21 @@ int main(int argc, char* argv[]) {
                       << "." 
                       << std::endl;
             while (planewop_ani.getFrame() < framesduration) {
+                // get the current time
+                auto start = std::chrono::system_clock::now();
+
                 planewop_ani.next(cube);
+
+                // get the current time after the frame calculation
+                auto stop = std::chrono::system_clock::now();
+                
+                // sleeeeeep for however long the animation recommends us
+                double duration = 1000000.0 / double(f_ani.getRecommendedFramerate())
+                    - std::chrono::duration<double, std::micro>(stop - start).count();
+
                 std::this_thread::sleep_for(
-                    std::chrono::milliseconds(
-                        int(1000.0 / float(planewop_ani.getRecommendedFramerate()))
-                        )
-                    );
+                    std::chrono::microseconds(int(duration))
+                );
             }
             --repeats;
         }
