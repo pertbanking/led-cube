@@ -72,7 +72,6 @@ LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
     , data_lock(this->data_m, std::defer_lock)
     , broadcast_lock(this->data_m, std::defer_lock)
     , render_start_m()
-    , render_start_lock(this->render_start_m)  // this lock starts with mutex ownership
     , transmit_cv()
     , thread_pause(true)
     , thread_kill(false) {
@@ -182,15 +181,22 @@ void LEDCube::broadcastUnlock() {
 
 void LEDCube::startBroadcast() {
     if (this->thread_pause) {
+        std::unique_lock<std::mutex> rendering_lock(
+            this->render_start_m, 
+            std::defer_lock
+        );
         this->thread_pause = false;
-        this->render_start_lock.unlock();
-        this->transmit_cv.notify_one();
     }
+    this->transmit_cv.notify_one();
 }
 
 void LEDCube::pauseBroadcast() {
     if (!this->thread_pause) {
-        this->transmit_cv.wait(render_start_lock);
+        std::unique_lock<std::mutex> rendering_lock(
+            this->render_start_m, 
+            std::defer_lock
+        );
+        this->transmit_cv.wait(rendering_lock);
         this->thread_pause = true;
     }
 }
@@ -309,6 +315,34 @@ void LEDCube::voxelOff(float x, float y, float z, float scale) {
 
 bool LEDCube::getVoxel(uint8_t x, uint8_t y, uint8_t z) const {
     return this->data[x][y][z];
+}
+
+void LEDCube::drawLine(
+    float x0,
+    float y0,
+    float z0,
+    float x1,
+    float y1,
+    float z1,
+    float scale) {
+        
+    this->voxelOn(x0, y0, z0, scale);
+    this->voxelOn(x1, y1, z1, scale);
+
+    vector< vector<bool> > xyplane(8, vector<bool>(8, false));
+    vector< vector<bool> > xzplane(8, vector<bool>(8, false));
+    vector< vector<bool> > yzplane(8, vector<bool>(8, false));
+
+    // draw a line on the xy-plane
+    double y_start = y0;
+    double xy_slope = (y0 - y1) / (x0 - x1);
+    for (
+      double x_start = x0;
+      (x0 < x1)? x_start < x1 : x_start > x1;
+      x_start += (x0 < x1)? 1.0 : -1.0) {
+        y_start += (x0 < x1)? xy_slope : -xy_slope;
+        xyplane[int(x_start + 0.5)][int(y_start + 0.5)] = true;
+    } 
 }
 
 void LEDCube::drawXPlane(uint8_t x) {

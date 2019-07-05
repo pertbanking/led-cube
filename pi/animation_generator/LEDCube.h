@@ -53,7 +53,6 @@ private:
     // it is used to halt the render thread at the stopBreadcast() call and 
     // continue it at the startBroadcast() call.
     std::mutex render_start_m;
-    std::unique_lock<std::mutex> render_start_lock;
     std::condition_variable transmit_cv;
     bool thread_pause;
     bool thread_kill;
@@ -219,6 +218,7 @@ public:
      * For instance, if `500.0, 350.0, 125.0` are input as `x,y,z` and `100.0`
      * is input as the `scale`, then the voxel at `(5,4,1)` will be set to the
      * value of `on`.
+     * 
      * @param x     x-coord
      * @param y     y-coord
      * @param z     z-coord
@@ -227,6 +227,16 @@ public:
      */
     void setVoxel(float x, float y, float z, bool on, float scale = 1.0f);
 
+    /**
+     * Set the voxel at the given coordinate.
+     *
+     * There is no scaling for this command. If you use it, it is assumed you
+     * want to control the voxels directly.
+     * @param x  the x coord
+     * @param y  the y coord
+     * @param z  the z coord
+     * @param on `bool` for the value of the voxel
+     */
     void setVoxel(uint8_t x, uint8_t y, uint8_t z, bool on);
 
     void voxelOn(float x, float y, float z, float scale = 1.0f);
@@ -239,6 +249,16 @@ public:
 
     bool getVoxel(uint8_t x, uint8_t y, uint8_t z) const;
 
+    /**
+     * Draws a line segment from `(x0,y0,z0)` to `(x1,y1,z1)`.
+     * @param x0    x0
+     * @param y0    y0
+     * @param z0    z0
+     * @param x1    c1
+     * @param y1    y1
+     * @param z1    z1
+     * @param scale pre-divisor of the coordinates (optional)
+     */
     void drawLine(
         float x0, 
         float y0, 
@@ -248,10 +268,22 @@ public:
         float z1,
         float scale = 1.0f);
 
+    /**
+     * Draws an yz-plane at the designated x-index.
+     * @param x the x-index of the matrix.
+     */
     void drawXPlane(uint8_t x);
 
+    /**
+     * Draws an xz-plane at the designated y-index.
+     * @param y the y-index of the matrix.
+     */
     void drawYPlane(uint8_t y);
     
+    /**
+     * Draws an xy-plane at the designated z-index.
+     * @param z the z-index of the matrix.
+     */
     void drawZPlane(uint8_t z);
 
     void drawSphere(

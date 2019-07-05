@@ -79,10 +79,10 @@ int main(int argc, char* argv[]) {
         cube->startBroadcast();
         std::cout << "Live." << std::endl;
 
-        int repeats = 10;
+        int repeats = 1000;
 
         while (repeats) {
-            int framesduration = 2000;
+            int framesduration = 1500;
             Fireworks f_ani;  // the rain animation
             std::cout << "Starting animation " 
                       << f_ani.getName() 
@@ -102,13 +102,21 @@ int main(int argc, char* argv[]) {
                 // sleeeeeep for however long the animation recommends us
                 double duration = 1000000.0 / double(f_ani.getRecommendedFramerate())
                     - std::chrono::duration<double, std::micro>(stop - start).count();
-                
+
                 std::this_thread::sleep_for(
                     std::chrono::microseconds(int(duration))
                 );
             }
 
-            framesduration = 800;
+            std::cout << "Pausing broadcast..." << std::endl;
+            cube->pauseBroadcast();
+            std::this_thread::sleep_for(
+                    std::chrono::milliseconds(2000)
+                );
+            std::cout << "Resuming..." << std::endl;
+            cube->startBroadcast();
+
+            framesduration = 1000;
             Rain rain_ani;  // the rain animation
             std::cout << "Starting animation " 
                       << rain_ani.getName() 
@@ -132,7 +140,7 @@ int main(int argc, char* argv[]) {
                 );
             }
 
-            framesduration = 800;
+            framesduration = 300;
             PlaneWop planewop_ani;
             std::cout << "Starting animation " 
                       << planewop_ani.getName() 

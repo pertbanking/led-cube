@@ -66,7 +66,7 @@ public:
     , debris()
     , gen(std::chrono::system_clock::now().time_since_epoch().count())
     , rocket_generator(1, 100)
-    , rocket_placer(3.5, 5.5) 
+    , rocket_placer(1.5, 5.5) 
     , rocket_exploder(1, 100)
     , debris_amount(10, 25)
     , debris_phi(M_PI_2, 0.4)
