@@ -34,7 +34,6 @@ using namespace std;
 // constants, (con/de)structors, copiers, and instances
 // ==================================
 
-const int CUBE_SIZE = 8;
 
 LEDCube* LEDCube::instance = nullptr;
 
@@ -334,15 +333,18 @@ void LEDCube::drawLine(
     vector< vector<bool> > yzplane(8, vector<bool>(8, false));
 
     // draw a line on the xy-plane
+    // start with the y-points, then move on to the x-points
     double y_start = y0;
-    double xy_slope = (y0 - y1) / (x0 - x1);
-    for (
-      double x_start = x0;
-      (x0 < x1)? x_start < x1 : x_start > x1;
-      x_start += (x0 < x1)? 1.0 : -1.0) {
-        y_start += (x0 < x1)? xy_slope : -xy_slope;
-        xyplane[int(x_start + 0.5)][int(y_start + 0.5)] = true;
-    } 
+    if (x0 - x1 > 0.0001) {
+        double xy_slope = (y0 - y1) / (x0 - x1);
+        for (
+          double x_start = x0;
+          (x0 < x1)? x_start < x1 : x_start > x1;
+          x_start += (x0 < x1)? 1.0 : -1.0) {
+            y_start += (x0 < x1)? xy_slope : -xy_slope;
+            xyplane[int(x_start + 0.5)][int(y_start + 0.5)] = true;
+        }
+    }
 }
 
 void LEDCube::drawXPlane(uint8_t x) {

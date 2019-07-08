@@ -24,6 +24,9 @@
 using namespace std;
 
 
+const int CUBE_SIZE = 8;  //< The size of our cube.
+
+
 // forward declaration
 class Animation;
 

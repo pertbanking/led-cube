@@ -22,6 +22,7 @@
 #include "animations/Rain.cpp"
 #include "animations/PlaneWop.cpp"
 #include "animations/Fireworks.cpp"
+#include "animations/Waves_I.cpp"
 
 
 // the cube as a bool array
@@ -82,8 +83,34 @@ int main(int argc, char* argv[]) {
         int repeats = 1000;
 
         while (repeats) {
-            int framesduration = 1500;
-            Fireworks f_ani;  // the rain animation
+            int framesduration = 2000;
+            Waves_I w_ani;  // the rain animation
+            std::cout << "Starting animation " 
+                      << w_ani.getName() 
+                      << "." 
+                      << std::endl;
+            while (w_ani.getFrame() < framesduration) {
+                // @REXFORD: NOTE THIS SYNTAX!!
+                
+                // get the current time
+                auto start = std::chrono::system_clock::now();
+
+                w_ani.next(cube);
+
+                // get the current time after the frame calculation
+                auto stop = std::chrono::system_clock::now();
+                
+                // sleeeeeep for however long the animation recommends us
+                double duration = 1000000.0 / double(w_ani.getRecommendedFramerate())
+                    - std::chrono::duration<double, std::micro>(stop - start).count();
+
+                std::this_thread::sleep_for(
+                    std::chrono::microseconds(int(duration))
+                );
+            }
+
+            framesduration = 1500;
+            Fireworks f_ani;  // the fireworks animation
             std::cout << "Starting animation " 
                       << f_ani.getName() 
                       << "." 
@@ -108,13 +135,13 @@ int main(int argc, char* argv[]) {
                 );
             }
 
-            std::cout << "Pausing broadcast..." << std::endl;
-            cube->pauseBroadcast();
-            std::this_thread::sleep_for(
-                    std::chrono::milliseconds(2000)
-                );
-            std::cout << "Resuming..." << std::endl;
-            cube->startBroadcast();
+            // std::cout << "Pausing broadcast..." << std::endl;
+            // cube->pauseBroadcast();
+            // std::this_thread::sleep_for(
+            //         std::chrono::milliseconds(2000)
+            //     );
+            // std::cout << "Resuming..." << std::endl;
+            // cube->startBroadcast();
 
             framesduration = 1000;
             Rain rain_ani;  // the rain animation
