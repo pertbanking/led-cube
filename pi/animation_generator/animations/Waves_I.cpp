@@ -44,7 +44,7 @@ public:
 	void calculateNext(LEDCube* cube) {
 		cube->clear();
 
-		// equation for each point is 4 + 4 * sin(wx+theta*t) * cos(wy+theta*t)
+		// equation for each point is 3.5 + 4 * sin(wx+theta*t) * cos(wy+theta*t)
 
 		// sin(wt + theta)
 		sin_phase = double(this->getFrame()) / 30.0;  // theta = t (seconds)
@@ -56,7 +56,7 @@ public:
 				cube->voxelOn(
 					float(i),
 					float(j),
-					4.0 + 
+					3.5 + 
 						4.0 
 						* sin(sin_freq*i + sin_phase)
 						* cos(cos_freq*j + cos_phase)
