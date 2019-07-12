@@ -16,8 +16,8 @@
 
 
 const std::string WAVES_I_NAME = "Waves (sine * cosine)";
-const int R_FRAMERATE = 50;
-const int R_DURATION = 700;
+const int WAVES_FRAMERATE = 50;
+const int WAVES_DURATION = 700;
 
 /**
  * Broadcasts the shape of sin*cos
@@ -32,7 +32,7 @@ private:
 
 public:
 	Waves_I ()
-	: Animation(WAVES_I_NAME, R_FRAMERATE, R_DURATION)
+	: Animation(WAVES_I_NAME, WAVES_FRAMERATE, WAVES_DURATION)
 	, sin_phase(0.0)
 	, cos_phase(0.0)
 	, sin_freq(0.4)

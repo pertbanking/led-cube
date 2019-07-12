@@ -12,7 +12,7 @@
 #include "../Animation.h"
 
 
-const std::string CUBEWOP_I_NAME = "CubeWop Corners";
+const std::string CUBEWOP_I_NAME = "CubeWop (corners)";
 
 class CubeWop_I : public Animation {
 private:
@@ -24,7 +24,7 @@ private:
 public:
 
     CubeWop_I()
-    : Animation(CUBEWOP_NAME, 50, 700)
+    : Animation(CUBEWOP_I_NAME, 50, 700)
     , corner(0)
     , top(false)
     , pos(7)

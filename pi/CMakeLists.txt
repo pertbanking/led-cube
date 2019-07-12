@@ -14,8 +14,9 @@ add_executable(
 		animation_generator/Animation.cpp
 		animation_generator/animations/Rain.cpp
 		animation_generator/animations/PlaneWop.cpp
-		animation_generator/animations/CubeWop.cpp
+		animation_generator/animations/CubeWop_I.cpp
 		animation_generator/animations/Waves_I.cpp
+		animation_generator/animations/FlashFade.cpp
 )
 
 target_include_directories(animate PUBLIC "${PROJECT_SOURCE_DIR}/serial/include")

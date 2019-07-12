@@ -242,13 +242,25 @@ public:
      */
     void setVoxel(uint8_t x, uint8_t y, uint8_t z, bool on);
 
+    void setVoxel(int x, int y, int z, bool on) {
+        this->setVoxel(uint8_t(x), uint8_t(y), uint8_t(z), on);
+    }
+
     void voxelOn(float x, float y, float z, float scale = 1.0f);
 
     void voxelOn(uint8_t x, uint8_t y, uint8_t z);
+    
+    void voxelOn(int x, int y, int z) {
+        this->voxelOn(uint8_t(x), uint8_t(y), uint8_t(z));
+    }
+
+    void voxelOff(float x, float y, float z, float scale = 1.0f);
 
     void voxelOff(uint8_t x, uint8_t y, uint8_t z);
 
-    void voxelOff(float x, float y, float z, float scale = 1.0f);
+    void voxelOff(int x, int y, int z) {
+        this->voxelOff(uint8_t(x), uint8_t(y), uint8_t(z));
+    }
 
     bool getVoxel(uint8_t x, uint8_t y, uint8_t z) const;
 
