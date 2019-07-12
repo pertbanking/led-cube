@@ -52,6 +52,11 @@ protected:
 
     /**
      * Set the animation to rest for a set number of frames.
+     *
+     * Note that setting `frames` will totally prevent the
+     * calculateNext method from begin called, presumably for
+     * `frames / recommendedFramerate` seconds.
+     * 
      * @param frames The number of frames to rest for.
      */
     void rest(int frames) {

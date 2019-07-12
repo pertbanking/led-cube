@@ -21,6 +21,7 @@
 
 #include "animations/Rain.cpp"
 #include "animations/PlaneWop.cpp"
+#include "animations/CubeWop.cpp"
 #include "animations/Fireworks.cpp"
 #include "animations/Waves_I.cpp"
 
@@ -80,18 +81,47 @@ int main(int argc, char* argv[]) {
         cube->startBroadcast();
         std::cout << "Live." << std::endl;
 
+        //
+        //
+        //
+        // simpley repeeat untiel wee waent toe stoep
         int repeats = 1000;
 
         while (repeats) {
-            int framesduration = 2000;
-            Waves_I w_ani;  // the rain animation
+            int framesduration = 200000;
+            CubeWop cubewop_ani;  // the cubewop animation
+            std::cout << "Starting animation " 
+                      << cubewop_ani.getName() 
+                      << "." 
+                      << std::endl;
+            while (cubewop_ani.getFrame() < framesduration) {
+                // @REXFORD: NOTE THIS SYNTAX!!
+                
+                // get the current time
+                auto start = std::chrono::system_clock::now();
+
+                cubewop_ani.next(cube);
+
+                // get the current time after the frame calculation
+                auto stop = std::chrono::system_clock::now();
+                
+                // sleeeeeep for however long the animation recommends us
+                double duration = 1000000.0 / double(cubewop_ani.getRecommendedFramerate())
+                    - std::chrono::duration<double, std::micro>(stop - start).count();
+
+                std::this_thread::sleep_for(
+                    std::chrono::microseconds(int(duration))
+                );
+            }
+
+
+            framesduration = 2000;
+            Waves_I w_ani;  // the waves animation
             std::cout << "Starting animation " 
                       << w_ani.getName() 
                       << "." 
                       << std::endl;
             while (w_ani.getFrame() < framesduration) {
-                // @REXFORD: NOTE THIS SYNTAX!!
-                
                 // get the current time
                 auto start = std::chrono::system_clock::now();
 
@@ -116,8 +146,6 @@ int main(int argc, char* argv[]) {
                       << "." 
                       << std::endl;
             while (f_ani.getFrame() < framesduration) {
-                // @REXFORD: NOTE THIS SYNTAX!!
-                
                 // get the current time
                 auto start = std::chrono::system_clock::now();
 

@@ -15,23 +15,22 @@
 #include <cmath>
 
 
-const std::string WAVES_I_NAME = "Waves (sine + cosine)";
+const std::string WAVES_I_NAME = "Waves (sine * cosine)";
 const int R_FRAMERATE = 50;
 const int R_DURATION = 700;
 
 /**
- * Broadcasts the shape of sin
+ * Broadcasts the shape of sin*cos
  */
 class Waves_I : public Animation {
 private:
-	double sin_phase;
-	double cos_phase;
-	double sin_freq;
-	double cos_freq;
+    double sin_phase;
+    double cos_phase;
+    double sin_freq;
+    double cos_freq;
 
 
 public:
-
 	Waves_I ()
 	: Animation(WAVES_I_NAME, R_FRAMERATE, R_DURATION)
 	, sin_phase(0.0)

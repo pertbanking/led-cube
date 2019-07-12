@@ -24,7 +24,7 @@
 using namespace std;
 
 
-const int CUBE_SIZE = 8;  //< The size of our cube.
+const int CUBE_SIZE = 8;  //< The size of our cube
 
 
 // forward declaration
@@ -334,13 +334,24 @@ public:
         bool filled = false,
         float scale = 1.0f);
 
+    /**
+     * Draws a box with faces parallel to the plane axes.
+     * @param x0     x0
+     * @param y0     y0
+     * @param z0     z0
+     * @param x1     x1
+     * @param y1     y1
+     * @param z1     z1
+     * @param filled If `true`, all voxels between the faces are illuminated.
+     * @param scale  The scale for the coordinates.
+     */
     void drawBox(
-        float x, 
-        float y, 
-        float z, 
-        float l, 
-        float w, 
-        float h, 
+        float x0, 
+        float y0, 
+        float z0, 
+        float x1, 
+        float y1, 
+        float z1, 
         bool filled = false,
         float scale = 1.0f);
 
