@@ -357,7 +357,7 @@ void LEDCube::drawLine(
         float xy_slope = (y0 - y1) / (x0 - x1);
         float xz_slope = (z0 - z1) / (x0 - x1);
         for (
-          float x_prog = x0;
+          x_prog = x0;
           (x0 < x1)? x_prog < x1 : x_prog > x1;
           x_prog += (x0 < x1)? 1.0 : -1.0) {
             xyplane[int(x_prog + 0.5)][int(y_prog + 0.5)] = true;
@@ -374,7 +374,7 @@ void LEDCube::drawLine(
         float yx_slope = (x0 - x1) / (y0 - y1);
         float yz_slope = (z0 - z1) / (y0 - y1);
         for (
-          float y_prog = y0;
+          y_prog = y0;
           (y0 < y1)? y_prog < y1 : y_prog > y1;
           y_prog += (y0 < y1)? 1.0 : -1.0) {
             xyplane[int(x_prog + 0.5)][int(y_prog + 0.5)] = true;
@@ -391,7 +391,7 @@ void LEDCube::drawLine(
         float zx_slope = (x0 - x1) / (z0 - z1);
         float zy_slope = (y0 - y1) / (z0 - z1);
         for (
-          float z_prog = z0;
+          z_prog = z0;
           (z0 < z1)? z_prog < z1 : z_prog > z1;
           z_prog += (z0 < z1)? 1.0 : -1.0) {
             xzplane[int(x_prog + 0.5)][int(z_prog + 0.5)] = true;
@@ -428,10 +428,11 @@ void LEDCube::drawLine(
     // if the planes all agree, illuminate the voxel
     for (uint8_t i = 0; i < CUBE_SIZE; ++i) {
         for (uint8_t j = 0; j < CUBE_SIZE; ++j) {
-            for (uint8_t k = 0; k < CUBE_SIZE; ++k) {
-
-                if (xyplane[i][j] and xzplane[i][k] and yzplane[j][k])
-                    this->voxelOn(i,j,k);
+            if (xyplane[i][j]) {
+                for (uint8_t k = 0; k < CUBE_SIZE; ++k) {
+                    if (xzplane[i][k] and yzplane[j][k])
+                        this->voxelOn(i,j,k);
+                }
             }
         }
     }
@@ -463,6 +464,33 @@ void LEDCube::drawZPlane(uint8_t z) {
     for (int i = 0; i < CUBE_SIZE; ++i)
         for (int j = 0; j < CUBE_SIZE; ++j)
             data[i][j][z] = true;
+}
+
+void LEDCube::drawBox(
+    float x0, 
+    float y0, 
+    float z0, 
+    float x1, 
+    float y1, 
+    float z1, 
+    bool filled,
+    float scale) {
+
+    // TODO: Implement a 'filled' algorithm
+    // TODO: Do NOT use the drawLine method here. It is inefficient, since
+    //       it generalizes to line segments not parallel to the axes.
+    this->drawLine(x0, y0, z0, x1, y0, z0);
+    this->drawLine(x0, y0, z0, x0, y1, z0);
+    this->drawLine(x0, y0, z0, x0, y0, z1);
+    this->drawLine(x1, y0, z0, x1, y0, z1);
+    this->drawLine(x1, y0, z1, x0, y0, z1);
+    this->drawLine(x0, y1, z0, x0, y1, z1);
+    this->drawLine(x0, y1, z1, x0, y0, z1);
+    this->drawLine(x0, y1, z0, x1, y1, z0);
+    this->drawLine(x1, y0, z0, x1, y1, z0);
+    this->drawLine(x0, y1, z1, x1, y1, z1);
+    this->drawLine(x1, y0, z1, x1, y1, z1);
+    this->drawLine(x1, y1, z0, x1, y1, z1);
 }
 
 
