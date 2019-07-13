@@ -24,7 +24,9 @@
 #include "animations/CubeWop_I.cpp"
 #include "animations/Fireworks.cpp"
 #include "animations/Waves_I.cpp"
+#include "animations/Waves_II.cpp"
 #include "animations/FlashFade.cpp"
+#include "animations/Suspension.cpp"
 
 
 // the cube as a bool array
@@ -106,21 +108,51 @@ int main(int argc, char* argv[]) {
         //
         //
         //
+        // Begin animation declarations and displays
+        //
+
         // simpley repeeat untiel wee waent toe stoep
         int repeats = 1000;
 
         while (repeats) {
+            Waves_II w2_ani;  // the waves animation
+            std::cout << "Starting animation " 
+                      << w2_ani.getName() 
+                      << "." 
+                      << std::endl;
+
+            displayAnimation(
+                w2_ani, 
+                cube, 
+                w2_ani.getRecommendedDuration(), 
+                w2_ani.getRecommendedFramerate());
+
+
+            Suspension susp_ani;  // the suspension animation
+            std::cout << "Starting animation " 
+                      << susp_ani.getName() 
+                      << "." 
+                      << std::endl;
+            
+            displayAnimation(
+                susp_ani, 
+                cube, 
+                susp_ani.getRecommendedDuration(), 
+                susp_ani.getRecommendedFramerate());
+
+
             FlashFade flashfade_ani;  // the flash->fade animation
             std::cout << "Starting animation " 
                       << flashfade_ani.getName() 
                       << "." 
                       << std::endl;
-            
+
             displayAnimation(
                 flashfade_ani, 
                 cube, 
                 flashfade_ani.getRecommendedDuration(), 
                 flashfade_ani.getRecommendedFramerate());
+
 
             CubeWop_I cubewop_ani;  // the cubewop animation
             std::cout << "Starting animation " 
@@ -131,7 +163,7 @@ int main(int argc, char* argv[]) {
             displayAnimation(
                 cubewop_ani, 
                 cube, 
-                2000, 
+                cubewop_ani.getRecommendedDuration(), 
                 cubewop_ani.getRecommendedFramerate());
 
 
@@ -144,8 +176,9 @@ int main(int argc, char* argv[]) {
             displayAnimation(
                 w_ani, 
                 cube, 
-                2000, 
+                w_ani.getRecommendedDuration(), 
                 w_ani.getRecommendedFramerate());
+
 
             Fireworks f_ani;  // the fireworks animation
             std::cout << "Starting animation " 
@@ -156,8 +189,9 @@ int main(int argc, char* argv[]) {
             displayAnimation(
                 f_ani, 
                 cube, 
-                1500,
+                f_ani.getRecommendedDuration(),
                 f_ani.getRecommendedFramerate());
+
 
             Rain rain_ani;  // the rain animation
             std::cout << "Starting animation " 
@@ -167,10 +201,11 @@ int main(int argc, char* argv[]) {
             displayAnimation(
                 rain_ani, 
                 cube, 
-                1500, 
+                rain_ani.getRecommendedDuration(), 
                 rain_ani.getRecommendedFramerate());
 
-            PlaneWop planewop_ani;
+
+            PlaneWop planewop_ani;  // planewop animation
             std::cout << "Starting animation " 
                       << planewop_ani.getName() 
                       << "." 
@@ -178,7 +213,7 @@ int main(int argc, char* argv[]) {
             displayAnimation(
                 planewop_ani,
                 cube, 
-                90,
+                planewop_ani.getRecommendedDuration(),
                 planewop_ani.getRecommendedFramerate());
 
             // repeat

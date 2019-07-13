@@ -32,7 +32,7 @@ public:
     // make sure to call this previous constructor with
     // its name designation, as shown.
     Rain()
-    : Animation(RAIN_NAME, 60, 1000)  
+    : Animation(RAIN_NAME, 60, 500)  
     , drops()
     , generator(std::chrono::system_clock::now().time_since_epoch().count())
     , drop_generator(1, 10)

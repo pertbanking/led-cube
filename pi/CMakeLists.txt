@@ -17,6 +17,8 @@ add_executable(
 		src/animations/CubeWop_I.cpp
 		src/animations/Waves_I.cpp
 		src/animations/FlashFade.cpp
+		src/animations/Suspension.cpp
+		src/animations/Waves_II.cpp
 )
 
 target_include_directories(animate PUBLIC "${PROJECT_SOURCE_DIR}/serial/include")

@@ -11,6 +11,7 @@
 
 #include "../Animation.h"
 
+#include <iostream>
 #include <random>
 #include <vector>
 
@@ -18,7 +19,7 @@ using namespace std;
 
 
 const std::string SUSPENSION_NAME = "Suspension";
-const int SUSPENSION_FRAMERATE = 30;
+const int SUSPENSION_FRAMERATE = 20;
 const int SUSPENSION_DURATION = 500;
 
 /**
@@ -31,40 +32,107 @@ private:
     std::default_random_engine gen;
     std::uniform_int_distribution<int> placer;
     bool top;
+    bool retracting;
     int step;
 
 public:
+
+    // TODO: Add functionality for different axes.
+
     Suspension()
     : Animation(SUSPENSION_NAME, SUSPENSION_FRAMERATE, SUSPENSION_DURATION)
     , places(CUBE_SIZE, vector<int>(CUBE_SIZE, 0))
     , planned(CUBE_SIZE, vector<int>(CUBE_SIZE))
     , gen(std::chrono::system_clock::now().time_since_epoch().count())
-    , placer(0, CUBE_SIZE)
-    , top(false)
-    , step(0) {
-        this->reset();
+    , placer(0, CUBE_SIZE-1)
+    , top(true)  // are we going toward the top?
+    , step(0)
+    , retracting(false) {
+        this->place();
     }
 
     void calculateNext(LEDCube* cube) {
-        for (int i = 0; i < CUBE_SIZE; ++i) {
-            for (int j = 0; j < CUBE_SIZE; ++j) {
-                // if ()
+
+        cube->clear();
+
+        if (this->getFrame() == 0) {
+            cube->drawZPlane(0);
+            this->rest(7);
+            return;
+        }
+
+        if (retracting) {
+            --step;
+            if (top) {
+                for (int i = 0; i < CUBE_SIZE; ++i) {
+                    for (int j = 0; j < CUBE_SIZE; ++j) {
+                        if (places[i][j] < CUBE_SIZE-1) {
+                            ++places[i][j];
+                        }
+                        cube->voxelOn(i, j, places[i][j]);
+                    }
+                }
+            } else {
+                for (int i = 0; i < CUBE_SIZE; ++i) {
+                    for (int j = 0; j < CUBE_SIZE; ++j) {
+                        if (places[i][j] > 0) {
+                            --places[i][j];
+                        }
+                        cube->voxelOn(i, j, places[i][j]);
+                    }
+                }
+            }
+            if (step == 0) {
+                rest(3);
+                top = !top;
+                retracting = false;
+                this->place();
+            }
+        } else {
+            ++step;
+            if (top) {
+                for (int i = 0; i < CUBE_SIZE; ++i) {
+                    for (int j = 0; j < CUBE_SIZE; ++j) {
+                        if (places[i][j] < planned[i][j]) {
+                            ++places[i][j];
+                        }
+                        cube->voxelOn(i, j, places[i][j]);
+                    }
+                }
+            } else {
+                for (int i = 0; i < CUBE_SIZE; ++i) {
+                    for (int j = 0; j < CUBE_SIZE; ++j) {
+                        if (places[i][j] > planned[i][j]) {
+                            --places[i][j];
+                        }
+                        cube->voxelOn(i, j, places[i][j]);
+                    }
+                }
+            }
+            if (step == CUBE_SIZE-1) {
+                rest(7);
+                retracting = true;
             }
         }
     }
 
     void reset() {
         this->frame = 0;
-        this->reset(this->top);
+        
+        this->step = 0;
+        this->top = true;
+        this->retracting = false;
+        this->place();
     }
 
-    void reset(bool top_) {
-        step = (top_) ? CUBE_SIZE-1 : 0;
+    void place() {
         for (int i = 0; i < CUBE_SIZE; ++i) {
             for (int j = 0; j < CUBE_SIZE; ++j) {
-                places[i][j] = (top_) ? CUBE_SIZE-1 : 0;
-                planned[i][j] = placer(gen);
+                this->places[i][j] = (this->top) ? 0 : CUBE_SIZE-1;
+                this->planned[i][j] = this->placer(this->gen);
             }
         }
     }
 };
+
+#endif  // SUSPENSION_CPP_

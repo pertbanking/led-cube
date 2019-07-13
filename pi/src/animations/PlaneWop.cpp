@@ -21,7 +21,7 @@ private:
     bool up;
 public:
     PlaneWop()
-    : Animation(PLANEWOP_NAME, 50, 1000)
+    : Animation(PLANEWOP_NAME, 50, 120)
     , planedir(0)
     , layer(0)
     , up(true) {}

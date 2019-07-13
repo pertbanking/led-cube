@@ -24,7 +24,7 @@ private:
 public:
 
     CubeWop_I()
-    : Animation(CUBEWOP_I_NAME, 50, 700)
+    : Animation(CUBEWOP_I_NAME, 50, 500)
     , corner(0)
     , top(false)
     , pos(7)

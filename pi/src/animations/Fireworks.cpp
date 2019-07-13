@@ -61,7 +61,7 @@ private:
 
 public:
     Fireworks()
-    : Animation(FIREWORKS_NAME, 50, 1000)
+    : Animation(FIREWORKS_NAME, 50, 500)
     , rockets()
     , debris()
     , gen(std::chrono::system_clock::now().time_since_epoch().count())
