@@ -21,7 +21,6 @@ class LEDCube;
 
 class Animation {
 private:
-    int frame;
     int restDuration;
     const string name;
 
@@ -30,14 +29,18 @@ private:
 
 protected:
 
+    int frame;  //< The current animation's frame. Change this if you're
+                //< resetting your animation (like in `reset()`).
     int recommendedFramerate;  //< The recommended framerate for this animation
     int recommendedDuration;   //< The recommended lifetime for this animation
     
     /**
-     * Override this method to make your own animations!
+     * @brief <b>Override this method to make your own animations!</b>
      *
      * Note that this is different from the `next()` method because this one
-     * does not deal with the cube's mutex. This is more pure.
+     * does not deal with the cube's mutex. The `next()` method will call this
+     * method, after it has locked the cube and increasaed the frame.
+     * 
      * @warning    Do not override the `next()` method. Override this method
      *             instead.
      * @warning    If your animation is too slow, the FPS of the cube will be
@@ -51,11 +54,12 @@ protected:
     virtual void calculateNext(LEDCube* cube) = 0;
 
     /**
-     * Set the animation to rest for a set number of frames.
+     * @brief Set the animation to rest for a set number of frames.
      *
      * Note that setting `frames` will totally prevent the
      * calculateNext method from begin called, presumably for
-     * `frames / recommendedFramerate` seconds.
+     * `frames / recommendedFramerate` seconds (though the exact
+     * number depends on the calling function).
      * 
      * @param frames The number of frames to rest for.
      */
@@ -78,7 +82,7 @@ protected:
 
 public:
     /**
-     * Steps this animation forward. 
+     * @brief Steps the animation forward. 
      * 
      * Call this method in a regular program.
      * @param cube The `cube` instance.
@@ -86,7 +90,7 @@ public:
     void next(LEDCube* cube);
 
     /**
-     * Resets the animation to its beginning state. 
+     * @brief Resets the animation to its beginning state. 
      * 
      * Every animation must override this method.
      */
@@ -107,7 +111,7 @@ public:
     }
 
     /**
-     * The current frame of the cube.
+     * @brief The current frame of the cube.
      *
      * Note that when the animation is initialized, the frame begins at 0,
      * and the first `next()` that is called is frame 1.
@@ -117,6 +121,14 @@ public:
         return this->frame;
     }
 
+    /**
+     * @brief The name of this animation.
+     *
+     * This should be passed in by a `super` call by the subclass
+     * 
+     * @return the name of the animation.
+     * @see Animation#Animation
+     */
     const string& getName() const {
         return this->name;
     }

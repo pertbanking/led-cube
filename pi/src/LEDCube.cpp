@@ -239,12 +239,9 @@ const vector<vector<uint8_t>>& LEDCube::getCubeData() {
             CUBE_SIZE, vector<uint8_t>(CUBE_SIZE, 0)
         );
 
-        assert(this->data.size() == CUBE_SIZE);
         // convert the cube bool into the proper x,y,z uint8_t array
         for (int i = 0; i < CUBE_SIZE; ++i) {
-            assert(this->data[i].size() == CUBE_SIZE);
             for (int j = 0; j < CUBE_SIZE; ++j) {
-                assert(this->data[i][j].size() == CUBE_SIZE);
                 for (int k = 0; k < CUBE_SIZE; ++k) {
                     this->cube_pass[k][j] += this->data[i][j][k] << i;
                 }

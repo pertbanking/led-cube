@@ -75,7 +75,7 @@ private:
     const LEDCube& operator=(const LEDCube&);
     
     /**
-     * Send data the to the cube's Arduino. 
+     * @brief Send data the to the cube's Arduino. 
      *
      * Takes the 8x8x8 bool array and converts it into a string of `uint8_t` bytes
      * with `this->magic` at the front and `'\n'` at the end. Then sends the data to
@@ -84,8 +84,10 @@ private:
     void usbSend();
 
     /**
-     * Lock the cube for writing data. If the cube is already locked, this
-     * method will block the current thread's execution.
+     * @brief Lock the cube for writing data. 
+     * If the cube is already locked, this method will block the current
+     * thread's execution.
+     * 
      * @warning You <b>must</b> call `unlock` for the cube to continue 
      *          broadcasting to the USB!! This method locks the mutex 
      *          of the render thread (ensuring its data won't change 
@@ -95,8 +97,10 @@ private:
     void broadcastLock();
 
     /**
-     * Unlock the cube for writing data. If the cube is already unlocked,
-     * does nothing.
+     * @brief Unlock the cube for writing data. 
+     * 
+     * If the cube is already unlocked, does nothing.
+     * 
      * @warning You <b>must</b> call `unlock` for the cube to continue 
      *          broadcasting to the USB!! This method locks the mutex 
      *          of the render thread (ensuring its data won't change 
@@ -137,8 +141,8 @@ public:
 
 
     /**
-     * Begin broadcasting serial signals to the serial::Serial object at the
-     * set `framerate`.
+     * @brief Begin broadcasting serial signals to the serial::Serial object at
+     * the set `framerate`.
      * 
      * The data will begin to lock intermittently when this method is
      * called.
@@ -146,7 +150,7 @@ public:
     void startBroadcast();
 
     /**
-     * Stop broadcasting to the serial::Serial object.
+     * @brief Stop broadcasting to the serial::Serial object.
      *
      * The data is guaranteed to no longer be locked after this method is 
      * called.
@@ -159,7 +163,7 @@ public:
     bool isBroadcasting();
 
     /**
-     * Lock the cube for writing data. If the cube is already locked, this
+     * @brief Lock the cube for writing data. If the cube is already locked, this
      * method will block the current thread's execution.
      * @warning You <b>must</b> call `unlock` for the cube to continue 
      *          broadcasting to the USB!! This method locks the mutex 
@@ -170,7 +174,7 @@ public:
     void lock();
 
     /**
-     * Unlock the cube for writing data. If the cube is already unlocked,
+     * @brief Unlock the cube for writing data. If the cube is already unlocked,
      * does nothing.
      * @warning You <b>must</b> call `unlock` for the cube to continue 
      *          broadcasting to the USB!! This method locks the mutex 
@@ -182,7 +186,7 @@ public:
 
 
     /**
-     * Set the rate at which data is sent to the cube.
+     * @brief Set the rate at which data is sent to the cube.
      * @warning         Setting the framerate too high will cause corrput data 
      *                  to be sent to the cube.
      * @param framerate The desired framerate.
@@ -195,7 +199,7 @@ public:
     int getFramerate() const;
 
     /**
-     * Return a copy of the queued state of the cube.
+     * @brief Return a copy of the queued state of the cube.
      *
      * @return The bool array that represents the current state of the cube.
      */
@@ -209,12 +213,12 @@ public:
 
 
     /**
-     * Clears the cube. Sets all pixel values to `false`.
+     * @brief Clears the cube. Sets all pixel values to `false`.
      */
     void clear();
 
     /**
-     * Sets the specified pixel value to the value of `on`. 
+     * @brief Sets the specified pixel value to the value of `on`. 
      * 
      * The `x`, `y`, and `z` parameters are used as coordinates in the cube 
      * by dividing each by `scale` and rounding them off to the nearest integer.
@@ -231,7 +235,7 @@ public:
     void setVoxel(float x, float y, float z, bool on, float scale = 1.0f);
 
     /**
-     * Set the voxel at the given coordinate.
+     * @brief Set the voxel at the given coordinate.
      *
      * There is no scaling for this command. If you use it, it is assumed you
      * want to control the voxels directly.
@@ -265,7 +269,7 @@ public:
     bool getVoxel(uint8_t x, uint8_t y, uint8_t z) const;
 
     /**
-     * Draws a line segment from `(x0,y0,z0)` to `(x1,y1,z1)`.
+     * @brief Draws a line segment from `(x0,y0,z0)` to `(x1,y1,z1)`.
      * @param x0    x0
      * @param y0    y0
      * @param z0    z0
@@ -284,19 +288,19 @@ public:
         float scale = 1.0f);
 
     /**
-     * Draws an yz-plane at the designated x-index.
+     * @brief Draws an yz-plane at the designated x-index.
      * @param x the x-index of the matrix.
      */
     void drawXPlane(uint8_t x);
 
     /**
-     * Draws an xz-plane at the designated y-index.
+     * @brief Draws an xz-plane at the designated y-index.
      * @param y the y-index of the matrix.
      */
     void drawYPlane(uint8_t y);
     
     /**
-     * Draws an xy-plane at the designated z-index.
+     * @brief Draws an xy-plane at the designated z-index.
      * @param z the z-index of the matrix.
      */
     void drawZPlane(uint8_t z);
@@ -347,7 +351,7 @@ public:
         float scale = 1.0f);
 
     /**
-     * Draws a box with faces parallel to the plane axes.
+     * @brief Draws a box with faces parallel to the plane axes.
      * @param x0     x0
      * @param y0     y0
      * @param z0     z0

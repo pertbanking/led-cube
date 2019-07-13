@@ -12,7 +12,6 @@
 #include "../Animation.h"
 
 #include <algorithm>
-#include <iostream>
 
 using namespace std;
 
@@ -22,7 +21,8 @@ const int FLASHF_FRAMERATE = 100;
 const int FLASHF_DURATION = 1100;
 
 /**
- * Broadcasts the shape of sin*cos
+ * Flashes all lights in the cube for a short time and then turns all of them
+ * off gradually.
  */
 class FlashFade : public Animation {
 private:
@@ -97,6 +97,7 @@ public:
     }
 
     void reset() {
+        this->frame = 0;
         on = false;
         flashrest = 40;
         lastFrame = 0;
