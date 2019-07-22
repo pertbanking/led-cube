@@ -1,28 +1,22 @@
 # led-cube
 This is the repository for the code, schematics, and boards of an 8x8x8 LED cube.
 
-More specifications coming soon!
+## Folder hierarchy
 
-I used Eagle for the PCBs. Eventually I will post a schematic of the multiplexing circuit (which isn't complicated), but for now, just know that it uses a decoder to select each 8-pin row on the bottom of the cube, D flip flops to store each LED value, and transistors to turn each layer on and off.
+Folder / File            | Purpose                                                          
+------------------------- | ----------------------------------------------------------------
+`arduino_serial_client/`  | Arduino code.
+`pcb/`                    | Contains PCB schematics and boards for the multiplexing circuit. 
+&nbsp;&nbsp;&nbsp;&nbsp;`/master pcb/`        | The decoder selector circuit
+&nbsp;&nbsp;&nbsp;&nbsp;`/slave pcb/`         | The D Flip-Flop circuit for each row of LEDs
+&nbsp;&nbsp;&nbsp;&nbsp;`/datasheets/`        | Datasheets for the ICs in the circuit
+`pi/`                     | Contains all animation code. Build the project in this directory with its `CMakeLists.txt` file (see below). So named because I recommend you run this on a Raspberry Pi.
+&nbsp;&nbsp;&nbsp;&nbsp;`/serial/`            | The standalone `serial` library (see below).
+&nbsp;&nbsp;&nbsp;&nbsp;`/src/`               | Code source.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/LEDCube.h`     | Represents the cube. Sends data to the Arduino through `serial`. Contains many helpful drawing functions. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/Animation.h`   | Header file for the generic animation. Extend this class to make your own animation!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/animations/`   | Contains animation files. Each file represents a different animation.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`/main.cpp`      | An example client program. It is highly recommended you specialize this program instead of making your own.
 
-I use an Arduino and for rendering the cube. The Arduino receives USB signals from a computer with the help of a package called `serial` (https://github.com/wjwwood/serial). 
-
-## Installation Instructions
-You will need the following software:
-- A C++ compiler + Make
-    - For Windows, MinGW works. Just select to install `g++` and `make` in the installer: https://osdn.net/projects/mingw/releases/
-    - For Mac, I found this: https://github.com/kennethreitz/osx-gcc-installer
-    - For everyone else, `g++` and `make` are probably on your command line already.
-- CMake
-    - https://cmake.org/download/
-
-In the command line and in the root directory,
-```
-> cd pi
-> mkdir build
-> cd build
-> cmake ..
-> make
-```
 
 More details coming soon. 
