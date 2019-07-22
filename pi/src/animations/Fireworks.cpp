@@ -102,13 +102,8 @@ public:
                 --i;
             } else {
                 std::get<2>(*i) += ROCKET_SPEED;
-
-                if (std::get<0>(*i) > -0.49 && std::get<0>(*i) < 7.49
-                    && std::get<1>(*i) > -0.49 && std::get<1>(*i) < 7.49
-                    && std::get<2>(*i) > -0.49 && std::get<2>(*i) < 7.49) {
-                    // draw the rocket if it's in the cube
-                    cube->voxelOn(std::get<0>(*i), std::get<1>(*i), std::get<2>(*i));
-                }
+                // draw the rocket
+                cube->voxelOn(std::get<0>(*i), std::get<1>(*i), std::get<2>(*i));
             }
         }
 

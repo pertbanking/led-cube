@@ -21,8 +21,8 @@ class LEDCube;
 
 class Animation {
 private:
-    int restDuration;
     const string name;
+    int restDuration;
 
     // you can't use this constructor!
     Animation();
@@ -73,8 +73,8 @@ protected:
         int recommendedFramerate = 50, 
         int recommendedDuration = 1000)
     : name(name)
-    , frame(0)
     , restDuration(0)
+    , frame(0)
     , recommendedFramerate(recommendedFramerate)
     , recommendedDuration(recommendedDuration) {}
 

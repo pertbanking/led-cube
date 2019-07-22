@@ -45,7 +45,7 @@ LEDCube::LEDCube() {}
 LEDCube::LEDCube(const LEDCube&) {}
 
 // private, do not use
-const LEDCube& LEDCube::operator=(const LEDCube&) {}
+const LEDCube& LEDCube::operator=(const LEDCube&) { return *this->instance; }
 
 LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
     : framerate(framerate)
@@ -323,12 +323,14 @@ void LEDCube::drawLine(
     float z1,
     float scale) {
 
-    x0 /= scale;
-    x1 /= scale;
-    y0 /= scale;
-    y1 /= scale;
-    z0 /= scale;
-    z1 /= scale;
+    if (scale != 1.0) {
+        x0 /= scale;
+        x1 /= scale;
+        y0 /= scale;
+        y1 /= scale;
+        z0 /= scale;
+        z1 /= scale;
+    }
 
     vector< vector<bool> > xyplane(CUBE_SIZE, vector<bool>(CUBE_SIZE, false));
     vector< vector<bool> > xzplane(CUBE_SIZE, vector<bool>(CUBE_SIZE, false));
@@ -473,21 +475,34 @@ void LEDCube::drawBox(
     bool filled,
     float scale) {
 
-    // TODO: Implement a 'filled' algorithm
-    // TODO: Do NOT use the drawLine method here. It is inefficient, since
-    //       it generalizes to line segments not parallel to the axes.
-    this->drawLine(x0, y0, z0, x1, y0, z0);
-    this->drawLine(x0, y0, z0, x0, y1, z0);
-    this->drawLine(x0, y0, z0, x0, y0, z1);
-    this->drawLine(x1, y0, z0, x1, y0, z1);
-    this->drawLine(x1, y0, z1, x0, y0, z1);
-    this->drawLine(x0, y1, z0, x0, y1, z1);
-    this->drawLine(x0, y1, z1, x0, y0, z1);
-    this->drawLine(x0, y1, z0, x1, y1, z0);
-    this->drawLine(x1, y0, z0, x1, y1, z0);
-    this->drawLine(x0, y1, z1, x1, y1, z1);
-    this->drawLine(x1, y0, z1, x1, y1, z1);
-    this->drawLine(x1, y1, z0, x1, y1, z1);
+    if (scale != 1.0) {
+        x0 /= scale;
+        x1 /= scale;
+        y0 /= scale;
+        y1 /= scale;
+        z0 /= scale;
+        z1 /= scale;
+    }
+
+    filled = false;
+    if (filled) {
+        // TODO: Implement a 'filled' algorithm
+    } else {
+        // TODO: Do NOT use the drawLine method here. It is inefficient, since
+        //       it generalizes to line segments not parallel to the axes.
+        this->drawLine(x0, y0, z0, x1, y0, z0);
+        this->drawLine(x0, y0, z0, x0, y1, z0);
+        this->drawLine(x0, y0, z0, x0, y0, z1);
+        this->drawLine(x1, y0, z0, x1, y0, z1);
+        this->drawLine(x1, y0, z1, x0, y0, z1);
+        this->drawLine(x0, y1, z0, x0, y1, z1);
+        this->drawLine(x0, y1, z1, x0, y0, z1);
+        this->drawLine(x0, y1, z0, x1, y1, z0);
+        this->drawLine(x1, y0, z0, x1, y1, z0);
+        this->drawLine(x0, y1, z1, x1, y1, z1);
+        this->drawLine(x1, y0, z1, x1, y1, z1);
+        this->drawLine(x1, y1, z0, x1, y1, z1);
+    }
 }
 
 
