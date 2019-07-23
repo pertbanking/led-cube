@@ -40,7 +40,7 @@ public:
     , lastFrame(0)
     , point(0)
     , pointOrder(CUBE_SIZE*CUBE_SIZE*CUBE_SIZE) {
-        for (int i = 0; i < pointOrder.size(); ++i) {
+        for (unsigned int i = 0; i < pointOrder.size(); ++i) {
             pointOrder[i] = i;
         }
 
@@ -105,7 +105,7 @@ public:
 
         pointOrder = vector<int>(CUBE_SIZE*CUBE_SIZE*CUBE_SIZE);
 
-        for (int i = 0; i < pointOrder.size(); ++i) {
+        for (unsigned int i = 0; i < pointOrder.size(); ++i) {
             pointOrder[i] = i;
         }
 

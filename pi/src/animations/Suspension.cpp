@@ -32,8 +32,8 @@ private:
     std::default_random_engine gen;
     std::uniform_int_distribution<int> placer;
     bool top;
-    bool retracting;
     int step;
+    bool retracting;
 
 public:
 
@@ -46,7 +46,8 @@ public:
     , gen(std::chrono::system_clock::now().time_since_epoch().count())
     , placer(0, CUBE_SIZE-1)
     , top(true)  // are we going toward the top?
-    , step(0)
+    , step(0)    // step goes from 0 to 7 when unfolding and from 7 to 0 when
+                 // retracting
     , retracting(false) {
         this->place();
     }
