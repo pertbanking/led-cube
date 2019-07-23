@@ -36,18 +36,7 @@ using namespace std;
 // ==================================
 
 
-LEDCube* LEDCube::instance = nullptr;
-
-// private, do not use
-LEDCube::LEDCube() {}
-
-// private, do not use
-LEDCube::LEDCube(const LEDCube&) {}
-
-// private, do not use
-const LEDCube& LEDCube::operator=(const LEDCube&) { return *this->instance; }
-
-LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
+LEDCube::LEDCube(int framerate)
     : framerate(framerate)
     , data(
         vector<vector<vector<bool>>>(
@@ -57,162 +46,39 @@ LEDCube::LEDCube(shared_ptr<serial::Serial>& usb, int framerate, string magic)
                 )
             )
         )
-    , magic(magic)
-    , usb_message(new uint8_t[CUBE_SIZE*CUBE_SIZE + 1 + magic.size()])
     , data_current(true)
     , cube_pass(
         vector<vector<uint8_t>>(
-            CUBE_SIZE, vector<uint8_t>(
-                CUBE_SIZE, 0)
+                CUBE_SIZE, 
+                vector<uint8_t>(CUBE_SIZE, 0)
             )
         )
-    , usb(usb)
     , render_thread()
     , data_m()
     , data_lock(this->data_m, std::defer_lock)
-    , broadcast_lock(this->data_m, std::defer_lock)
-    , render_start_m()
-    , transmit_cv()
-    , thread_pause(true)
-    , thread_kill(false) {
-
-    // start the thread
-    render_thread = std::thread([this](void) {
-
-        while(!this->thread_kill) {
-            // TODO: Have a non-static wait period.
-            // get the lock in the scope, so when it gets destroyed, we release
-            // the mutex.
-            {
-                std::unique_lock<std::mutex> rendering_lock(
-                    this->render_start_m, 
-                    std::defer_lock
-                );
-                this->transmit_cv.wait(
-                    rendering_lock, 
-                    [this]() -> bool { return !this->thread_pause; }
-                );
-                this->usbSend();
-            }
-            this->transmit_cv.notify_one();
-
-            if (this->thread_kill)
-                break;
-
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(
-                    int(1000.0 / float(this->framerate) + 0.5) // DEBUG: Changed to 10,000 ms
-                )
-            );
-        }
-    });
-
-    render_thread.detach();
-
-    usb_message[magic.size() + CUBE_SIZE*CUBE_SIZE] = '\n';
-}
-
-LEDCube::~LEDCube() {
-    // destroy allocated resources
-    delete[] usb_message;
-    
-    // halt the render thread
-    this->thread_kill = true;
-}
-
-LEDCube* LEDCube::getInstance() {
-    return LEDCube::instance;
-}
-
-LEDCube* LEDCube::getInstance(
-    shared_ptr<serial::Serial> usb, 
-    int framerate,
-    string magic) {
-
-    if (LEDCube::instance == nullptr)
-        LEDCube::instance = new LEDCube(usb, framerate, magic);
-
-    return LEDCube::instance;
-}
-
-void LEDCube::destroyInstance() {
-    delete LEDCube::instance;
-    LEDCube::instance = nullptr;
-}
+    , broadcast_lock(this->data_m, std::defer_lock) {}
 
 
 // =======================================
 // timing and I/O control
 // =======================================
 
-
-void LEDCube::usbSend() {
-    std::copy(
-        this->magic.c_str(), 
-        this->magic.c_str() + 
-        this->magic.size(),
-        usb_message);
-
-    this->broadcastLock();
-    this->getCubeData();
-    this->broadcastUnlock();
-
-    for (auto i = this->cube_pass.begin(); i != this->cube_pass.end(); ++i) {
-        std::copy(
-            i->begin(), 
-            i->end(), 
-            this->usb_message + 
-                this->magic.size() + 
-                i->size()*(i - this->cube_pass.begin())
-        );
-    }
-
-    usb->write(this->usb_message, this->magic.size() + CUBE_SIZE*CUBE_SIZE + 1);
-}
-
 void LEDCube::broadcastLock() {
     this->broadcast_lock.lock();
 }
 
 void LEDCube::broadcastUnlock() {
-    this->broadcast_lock.unlock();
+    if (this->broadcast_lock.owns_lock())
+        this->broadcast_lock.unlock();
 }
 
-
-void LEDCube::startBroadcast() {
-    if (this->thread_pause) {
-        std::unique_lock<std::mutex> rendering_lock(
-            this->render_start_m, 
-            std::defer_lock
-        );
-        this->thread_pause = false;
-    }
-    this->transmit_cv.notify_one();
-}
-
-void LEDCube::pauseBroadcast() {
-    if (!this->thread_pause) {
-        std::unique_lock<std::mutex> rendering_lock(
-            this->render_start_m, 
-            std::defer_lock
-        );
-        this->transmit_cv.wait(rendering_lock);
-        this->thread_pause = true;
-    }
-}
-
-bool LEDCube::isBroadcasting() {
-    return !this->thread_pause;
-}
-
-void LEDCube::setFramerate(int f) {
+void LEDCube::setMessageRate(int f) {
     this->framerate = f;
 }
 
-int LEDCube::getFramerate() const {
+int LEDCube::getMessageRate() const {
     return this->framerate;
 }
-
 
 void LEDCube::lock() {
     this->data_lock.lock();
