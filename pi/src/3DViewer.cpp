@@ -36,7 +36,9 @@ struct Quads {
   int state;
   int total;
 
-} Quads Q[100];
+};
+
+Quads Q[100];
 
 
 void addQuad() {

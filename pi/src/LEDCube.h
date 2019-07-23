@@ -11,14 +11,10 @@
 
 #include <condition_variable>
 #include <chrono>
-#include <memory>
 #include <mutex>
 #include <thread>
 #include <vector>
 #include <cstdint>
-
-#include <serial/serial.h>
-#include "Animation.h"
 
 
 using namespace std;
@@ -27,64 +23,33 @@ using namespace std;
 const int CUBE_SIZE = 8;  //< The size of our cube
 
 
-// forward declaration
-class Animation;
-
-
 class LEDCube {
-private:
+
+protected:
 
     int framerate;
     std::vector<std::vector<std::vector<bool>>> data;
-    std::string magic;
-    uint8_t* usb_message;
 
     bool data_current;  //< true if the data in the `cube_pass` array represents
                         //< what is in the `data` array.
     std::vector<std::vector<uint8_t>> cube_pass;
-    std::shared_ptr<serial::Serial> usb;
 
-    std::thread render_thread;
+    std::thread render_thread;  //< The thread that runs visualizer. You
+                                //< <b>must</b> set this in the ctor.
+
     // the data_m mutex is shared between the data_lock and broadcast_lock
     // it's used to ensure the cube data is accessed one-at-a-time between the
-    // USB thread and the animation thread.
+    // render thread and the calculation thread.
     std::mutex data_m;
     std::unique_lock<std::mutex> data_lock;
     std::unique_lock<std::mutex> broadcast_lock;
 
-    // the render_start_m mutex is used only by the transmit_cv condition_variable.
-    // it is used to halt the render thread at the stopBreadcast() call and 
-    // continue it at the startBroadcast() call.
-    std::mutex render_start_m;
-    std::condition_variable transmit_cv;
-    bool thread_pause;
-    bool thread_kill;
 
-
-    static LEDCube* instance;
-
-    LEDCube();
-    LEDCube(const LEDCube&);
-    LEDCube(
-        shared_ptr<serial::Serial>& usb, 
-        int framerate, 
-        string magic);
-    
-    ~LEDCube();  // only allow the static destroyInstance() function
-
-    const LEDCube& operator=(const LEDCube&);
-    
-    /**
-     * @brief Send data the to the cube's Arduino. 
-     *
-     * Takes the 8x8x8 bool array and converts it into a string of `uint8_t` bytes
-     * with `this->magic` at the front and `'\n'` at the end. Then sends the data to
-     * the Arduino.
-     */
-    void usbSend();
+    LEDCube(int message_rate);
 
     /**
-     * @brief Lock the cube for writing data. 
+     * @brief Lock the cube for transmitting data. 
+     * 
      * If the cube is already locked, this method will block the current
      * thread's execution.
      * 
@@ -97,7 +62,7 @@ private:
     void broadcastLock();
 
     /**
-     * @brief Unlock the cube for writing data. 
+     * @brief Unlock the cube for transmitting data. 
      * 
      * If the cube is already unlocked, does nothing.
      * 
@@ -112,64 +77,19 @@ private:
 
 public:
 
+    LEDCube() = delete;
 
-    /**
-     * Returns the current instance of the cube. Returns `nullptr` if there has
-     * been no instance created or if the cube has been destroyed.
-     * 
-     * @return The instance of the cube; `nullptr` if it does not exist.
-     */
-    static LEDCube* getInstance();
+    LEDCube(const LEDCube&) = delete;
 
-    /**
-     * Returns a new instance of the cube with the given parameters if there 
-     * doesn't already exist none; otherwise ignores all parameters and returns
-     * the current instance of the cube.
-     * @param  usb       a `shared_ptr` to a `serial::Serial` object, which is 
-     *                   where the LEDCube will broadcast to.
-     * @param  framerate The desired framerate of the cube.
-     * @param  magic     The magic bytes placed at the beginning of a 
-     *                   transmission.
-     * @return           The instance of the cube (new or old)
-     */
-    static LEDCube* getInstance(
-        shared_ptr<serial::Serial> usb, 
-        int framerate = 60, 
-        string magic = "JANDY");
-
-    static void destroyInstance();
-
-
-    /**
-     * @brief Begin broadcasting serial signals to the serial::Serial object at
-     * the set `framerate`.
-     * 
-     * The data will begin to lock intermittently when this method is
-     * called.
-     */
-    void startBroadcast();
-
-    /**
-     * @brief Stop broadcasting to the serial::Serial object.
-     *
-     * The data is guaranteed to no longer be locked after this method is 
-     * called.
-     */
-    void pauseBroadcast();
-
-    /**
-     * @return `true` if the cube is broadcasting, `false` if it is not.
-     */
-    bool isBroadcasting();
+    const LEDCube& operator=(const LEDCube&) = delete;
 
     /**
      * @brief Lock the cube for writing data. If the cube is already locked, this
      * method will block the current thread's execution.
      * @warning You <b>must</b> call `unlock` for the cube to continue 
-     *          broadcasting to the USB!! This method locks the mutex 
-     *          of the render thread (ensuring its data won't change 
-     *          midway in transmission), so it must be unlocked for the
-     *          data to be accessed again.
+     *          broadcasting!! This method locks the mutex of the render thread
+     *          (ensuring its data won't change  midway in transmission), so it
+     *          must be unlocked for the data to be accessed again.
      */
     void lock();
 
@@ -177,26 +97,26 @@ public:
      * @brief Unlock the cube for writing data. If the cube is already unlocked,
      * does nothing.
      * @warning You <b>must</b> call `unlock` for the cube to continue 
-     *          broadcasting to the USB!! This method locks the mutex 
-     *          of the render thread (ensuring its data won't change 
-     *          midway in transmission), so it must be unlocked for the
-     *          data to be accessed again.
+     *          broadcasting!! This method locks the mutex of the render thread
+     *          (ensuring its data won't change  midway in transmission), so it
+     *          must be unlocked for the data to be accessed again.
      */
     void unlock();
 
 
     /**
-     * @brief Set the rate at which data is sent to the cube.
-     * @warning         Setting the framerate too high will cause corrput data 
-     *                  to be sent to the cube.
-     * @param framerate The desired framerate.
+     * @brief Set the rate at which the cube data is parsed and sent to the 
+     *        visualizer.
+     *
+     * @warning            Setting the rate too high can corrupt the data.
+     * @param message_rate The desired message rate.
      */
-    void setFramerate(int framerate);
+    void setMessageRate(int message_rate);
 
     /**
-     * @return The framerate of the cube.
+     * @return The message rate of the cube.
      */
-    int getFramerate() const;
+    int getMessageRate() const;
 
     /**
      * @brief Return a copy of the queued state of the cube.

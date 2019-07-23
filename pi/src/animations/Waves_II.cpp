@@ -17,7 +17,7 @@
 
 const std::string WAVES_II_NAME = "Waves (cos ripple)";
 const int WAVESII_FRAMERATE = 50;
-const int WAVESII_DURATION = 7000;
+const int WAVESII_DURATION = 700;
 
 /**
  * Broadcasts a shape of cos(r)

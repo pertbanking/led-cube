@@ -16,6 +16,7 @@ add_executable(
 	animate
 		src/main.cpp
 		src/LEDCube.cpp
+		src/LEDCubeUSBStreamer.cpp
 		src/Animation.cpp
 		src/animations/Rain.cpp
 		src/animations/PlaneWop.cpp
@@ -26,7 +27,7 @@ add_executable(
 		src/animations/Waves_II.cpp
 )
 
-target_compile_options(animate PUBLIC -Wall -Wextra -Werror)
+#target_compile_options(animate PUBLIC -Wall -Wextra -Werror)
 
 target_include_directories(animate PUBLIC "${PROJECT_SOURCE_DIR}/serial/include")
 

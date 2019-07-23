@@ -17,6 +17,7 @@
 #include <cstdint>
 
 #include "LEDCube.h"
+#include "LEDCubeUSBStreamer.h"
 #include <serial/serial.h>
 
 #include "animations/Rain.cpp"
@@ -88,13 +89,13 @@ int main(int argc, char* argv[]) {
     }
     catch (serial::IOException& e) {
         std::cout << "Could not open port at " << usb_port << "." << std::endl;
-        LEDCube::destroyInstance();
+        LEDCubeUSBStreamer::destroyInstance();
         return 1;
     }
 
     if (usb->isOpen())
     {
-        LEDCube* cube = LEDCube::getInstance(usb);
+        LEDCubeUSBStreamer* cube = LEDCubeUSBStreamer::getInstance(usb);
 
         std::cout << "Sleeping for 2 seconds..." << std::endl;
         // this sleep is essential. if the arduino receives serial signals 
@@ -222,7 +223,7 @@ int main(int argc, char* argv[]) {
 
         // clean up the cube instance
         std::cout << "Destroying LEDCube instance..." << std::endl;
-        LEDCube::destroyInstance();
+        LEDCubeUSBStreamer::destroyInstance();
         std::cout << "Done." << std::endl;
         return 0;
         // all in a day's work
