@@ -25,6 +25,8 @@ add_executable(
 		src/animations/FlashFade.cpp
 		src/animations/Suspension.cpp
 		src/animations/Waves_II.cpp
+		src/animations/Wiper.cpp
+		src/animations/CubeConstructor.cpp
 )
 
 #target_compile_options(animate PUBLIC -Wall -Wextra -Werror)

@@ -28,6 +28,7 @@
 #include "animations/Waves_II.cpp"
 #include "animations/FlashFade.cpp"
 #include "animations/Suspension.cpp"
+#include "animations/CubeConstructor.cpp"
 
 
 // the cube as a bool array
@@ -116,6 +117,18 @@ int main(int argc, char* argv[]) {
         int repeats = 1000;
 
         while (repeats) {
+            CubeConstructor cc_ani;  // the waves animation
+            std::cout << "Starting animation " 
+                      << cc_ani.getName() 
+                      << "." 
+                      << std::endl;
+
+            displayAnimation(
+                cc_ani, 
+                cube, 
+                cc_ani.getRecommendedDuration(), 
+                cc_ani.getRecommendedFramerate());
+
             Waves_II w2_ani;  // the waves animation
             std::cout << "Starting animation " 
                       << w2_ani.getName() 
