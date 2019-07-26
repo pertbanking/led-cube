@@ -20,7 +20,7 @@ using namespace std;
 
 const std::string SUSPENSION_NAME = "Suspension";
 const int SUSPENSION_FRAMERATE = 20;
-const int SUSPENSION_DURATION = 500;
+const int SUSPENSION_DURATION = 300;
 
 /**
  * Suspends all points across 

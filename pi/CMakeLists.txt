@@ -29,11 +29,19 @@ add_executable(
 		src/animations/CubeConstructor.cpp
 )
 
-#target_compile_options(animate PUBLIC -Wall -Wextra -Werror)
+# Comment out to generate warnings....
+target_compile_options(animate PUBLIC
+	# ...at all
+	-Wall
+	# ...in abundance
+	-Wextra
+	# ...as errors
+	#-Werror
+)
 
 target_include_directories(animate PUBLIC "${PROJECT_SOURCE_DIR}/serial/include")
 
-target_link_libraries(animate serial)
+target_link_libraries(animate serial rt pthread)
 
 set_target_properties(animate
     PROPERTIES
@@ -48,22 +56,44 @@ set_target_properties(animate
 
 add_executable(
 	visualizer
-		src/3DViewer.cpp
+		src/visualizer.cpp
+		src/LEDCube.cpp
+		src/LEDCubeVisualizer.cpp
+		src/Animation.cpp
+		src/animations/Rain.cpp
+		src/animations/PlaneWop.cpp
+		src/animations/CubeWop_I.cpp
+		src/animations/Waves_I.cpp
+		src/animations/FlashFade.cpp
+		src/animations/Suspension.cpp
+		src/animations/Waves_II.cpp
+		src/animations/Wiper.cpp
+		src/animations/CubeConstructor.cpp
+)
+
+# Comment out to generate warnings....
+target_compile_options(visualizer PUBLIC
+	# ...at all
+	-Wall
+	# ...in abundance
+	-Wextra
+	# ...as errors
+	#-Werror
 )
 
 find_package(OpenGL)
 find_package(GLUT)
 
 if (NOT OpenGL_FOUND)
-	message(WARNING "OpenGL was not found. You cannot run 'make visualizer', but you can still run 'make' and create the basic LED cube USB client.")
+	message(WARNING "OpenGL was not found. You cannot run the visualizer, but you can still run 'make' and create the basic LED cube USB client.")
 endif()
 
 if (NOT GLUT_FOUND)
-	message(WARNING "GLUT was not found. You cannot run 'make visualizer', but you can still run 'make' and create the basic LED cube USB client.")
+	message(WARNING "GLUT was not found. You cannot run the visualizer, but you can still run 'make' and create the basic LED cube USB client.")
 endif()
 
 target_include_directories(visualizer PUBLIC ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
-target_link_libraries(visualizer ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+target_link_libraries(visualizer rt pthread ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 
 set_target_properties(visualizer
     PROPERTIES

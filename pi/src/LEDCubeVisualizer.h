@@ -27,6 +27,33 @@ private:
     LEDCubeVisualizer(const LEDCubeVisualizer&);
     const LEDCubeVisualizer& operator=(const LEDCubeVisualizer&);
 
+    /**
+     * [drawVoxel description]
+     * @param x  [description]
+     * @param y  [description]
+     * @param z  [description]
+     * @param on [description]
+     */
+    static void drawVoxel(float x, float y, float z, bool on);
+
+    /**
+     * [drawGrid description]
+     */
+    static void drawGrid();
+
+    /**
+     * [display description]
+     */
+    static void display();
+
+    /**
+     * [keyboard description]
+     * @param key [description]
+     * @param x   [description]
+     * @param y   [description]
+     */
+    static void keyboard(unsigned char key, int x, int y);
+
 
 public:
 

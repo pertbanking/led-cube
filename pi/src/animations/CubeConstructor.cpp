@@ -31,7 +31,7 @@ private:
     std::vector<std::tuple<float,float,float,float,float,float>> segments;
     std::vector<float> p1;
     std::vector<float> p2;
-    int edge_counter;
+    unsigned int edge_counter;
 
 
 public:
@@ -64,7 +64,7 @@ public:
     void calculateNext(LEDCube* cube) {
         cube->clear();
 
-        for (int i = 0; i < edge_counter; ++i) {
+        for (unsigned int i = 0; i < edge_counter; ++i) {
             cube->drawLine(
                 std::get<0>(segments[i]), 
                 std::get<1>(segments[i]),
