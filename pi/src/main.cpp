@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
+#include <list>
 #include <memory>
 #include <random>
 #include <thread>
@@ -94,8 +95,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    if (usb->isOpen())
-    {
+    if (usb->isOpen()) {
         LEDCubeUSBStreamer* cube = LEDCubeUSBStreamer::getInstance(usb);
 
         std::cout << "Sleeping for 2 seconds..." << std::endl;
@@ -113,122 +113,37 @@ int main(int argc, char* argv[]) {
         // Begin animation declarations and displays
         //
 
+        // The list of animations. We will just loop through these
+        std::list<Animation*> animation_list;
+        animation_list.push_back(new CubeConstructor());
+        animation_list.push_back(new Waves_II());
+        animation_list.push_back(new Suspension());
+        animation_list.push_back(new FlashFade());
+        animation_list.push_back(new CubeWop_I());
+        animation_list.push_back(new Waves_I());
+        animation_list.push_back(new Fireworks());
+        animation_list.push_back(new Rain());
+        animation_list.push_back(new PlaneWop());
+
         // simpley repeeat untiel wee waent toe stoep
         int repeats = 1000;
 
         while (repeats) {
-            CubeConstructor cc_ani;  // the waves animation
-            std::cout << "Starting animation " 
-                      << cc_ani.getName() 
-                      << "." 
-                      << std::endl;
+            for (Animation* ani : animation_list) {
+                std::cout << "Starting animation " 
+                          << ani->getName() 
+                          << "." 
+                          << std::endl;
 
-            displayAnimation(
-                cc_ani, 
-                cube, 
-                cc_ani.getRecommendedDuration(), 
-                cc_ani.getRecommendedFramerate());
+                displayAnimation( // force this thread to display the animation
+                    *ani,         // in real-time
+                    cube, 
+                    ani->getRecommendedDuration(), 
+                    ani->getRecommendedFramerate());
 
-            Waves_II w2_ani;  // the waves animation
-            std::cout << "Starting animation " 
-                      << w2_ani.getName() 
-                      << "." 
-                      << std::endl;
-
-            displayAnimation(
-                w2_ani, 
-                cube, 
-                w2_ani.getRecommendedDuration(), 
-                w2_ani.getRecommendedFramerate());
-
-
-            Suspension susp_ani;  // the suspension animation
-            std::cout << "Starting animation " 
-                      << susp_ani.getName() 
-                      << "." 
-                      << std::endl;
-            
-            displayAnimation(
-                susp_ani, 
-                cube, 
-                susp_ani.getRecommendedDuration(), 
-                susp_ani.getRecommendedFramerate());
-
-
-            FlashFade flashfade_ani;  // the flash->fade animation
-            std::cout << "Starting animation " 
-                      << flashfade_ani.getName() 
-                      << "." 
-                      << std::endl;
-
-            displayAnimation(
-                flashfade_ani, 
-                cube, 
-                flashfade_ani.getRecommendedDuration(), 
-                flashfade_ani.getRecommendedFramerate());
-
-
-            CubeWop_I cubewop_ani;  // the cubewop animation
-            std::cout << "Starting animation " 
-                      << cubewop_ani.getName() 
-                      << "." 
-                      << std::endl;
-            
-            displayAnimation(
-                cubewop_ani, 
-                cube, 
-                cubewop_ani.getRecommendedDuration(), 
-                cubewop_ani.getRecommendedFramerate());
-
-
-            Waves_I w_ani;  // the waves animation
-            std::cout << "Starting animation " 
-                      << w_ani.getName() 
-                      << "." 
-                      << std::endl;
-
-            displayAnimation(
-                w_ani, 
-                cube, 
-                w_ani.getRecommendedDuration(), 
-                w_ani.getRecommendedFramerate());
-
-
-            Fireworks f_ani;  // the fireworks animation
-            std::cout << "Starting animation " 
-                      << f_ani.getName() 
-                      << "." 
-                      << std::endl;
-            
-            displayAnimation(
-                f_ani, 
-                cube, 
-                f_ani.getRecommendedDuration(),
-                f_ani.getRecommendedFramerate());
-
-
-            Rain rain_ani;  // the rain animation
-            std::cout << "Starting animation " 
-                      << rain_ani.getName() 
-                      << "." 
-                      << std::endl;
-            displayAnimation(
-                rain_ani, 
-                cube, 
-                rain_ani.getRecommendedDuration(), 
-                rain_ani.getRecommendedFramerate());
-
-
-            PlaneWop planewop_ani;  // planewop animation
-            std::cout << "Starting animation " 
-                      << planewop_ani.getName() 
-                      << "." 
-                      << std::endl;
-            displayAnimation(
-                planewop_ani,
-                cube, 
-                planewop_ani.getRecommendedDuration(),
-                planewop_ani.getRecommendedFramerate());
+                // reset the animation so we don't have to make a new object
+                ani->reset();
+            }
 
             // repeat
             --repeats;

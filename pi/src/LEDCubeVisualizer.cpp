@@ -14,9 +14,23 @@
 
 #include <iostream>
 #include <thread>
-#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 
-#include <GL/glut.h>
+// Include GLEW
+#include <GL/glew.h>
+
+// Include GLFW
+#include <GLFW/glfw3.h>
+GLFWwindow* window;
+
+// Include GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+using namespace glm;
+
+// this file computes the shaders for ouv visualizer
+#include "opengl/shader.hpp"
 
 
 using namespace std;
@@ -30,22 +44,7 @@ LEDCubeVisualizer* LEDCubeVisualizer::instance = nullptr;
 
 LEDCubeVisualizer::LEDCubeVisualizer(int message_rate)
     : LEDCube(message_rate) {
-    int phoneynum = 1;
-    // std::string phoney = "Jandy in the house";
-    // const char* blah[] = { phoney.c_str() };
-    glutInit(&phoneynum, NULL);
-    glutInitDisplayMode(GLUT_DOUBLE);
-    glutInitWindowSize(800, 600);
-    glutCreateWindow("LED Cube Visualizer");
-    glutDisplayFunc(display);
-
-    glutKeyboardFunc(keyboard);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(35, 1.0f, 0.1f, 1000);  // ?
-    glMatrixMode(GL_MODELVIEW);
-    glEnable(GL_DEPTH_TEST);
+    
 }
 
 LEDCubeVisualizer::~LEDCubeVisualizer() {
@@ -133,6 +132,36 @@ void LEDCubeVisualizer::keyboard(unsigned char key, int x, int y) {
 void LEDCubeVisualizer::show() {
     // start the display thread
     render_thread = std::thread([this](void) {
+        if(!glfwInit()) {
+            throw new std::system_error("Failed to initialize GLFW");
+        }
+
+        glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        // Open a window and create its OpenGL context
+        window = glfwCreateWindow(1024, 768, "Cube Visualization", NULL, NULL);
+        if(window == NULL) {
+            glfwTerminate();
+            throw new std::system_error("Failed to make a GLFW window");
+        }
+        glfwMakeContextCurrent(window);
+
+        // Dark blue background
+        glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
+        
+        glutKeyboardFunc(keyboard);
+
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluPerspective(35, 1.0f, 0.1f, 1000);  // ?
+        glMatrixMode(GL_MODELVIEW);
+        glEnable(GL_DEPTH_TEST);
+        std::cout << ":";
+
         glutMainLoop();
     });
 }

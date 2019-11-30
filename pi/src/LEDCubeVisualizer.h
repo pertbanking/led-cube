@@ -28,15 +28,6 @@ private:
     const LEDCubeVisualizer& operator=(const LEDCubeVisualizer&);
 
     /**
-     * [drawVoxel description]
-     * @param x  [description]
-     * @param y  [description]
-     * @param z  [description]
-     * @param on [description]
-     */
-    static void drawVoxel(float x, float y, float z, bool on);
-
-    /**
      * [drawGrid description]
      */
     static void drawGrid();
