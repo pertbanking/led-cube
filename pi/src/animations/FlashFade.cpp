@@ -16,7 +16,7 @@
 using namespace std;
 
 
-const std::string FLASH_FADE_NAME = "Flash->Fade";
+const std::string FLASH_FADE_NAME = "Flash-fade";
 const int FLASHF_FRAMERATE = 100;
 const int FLASHF_DURATION = 1100;
 
