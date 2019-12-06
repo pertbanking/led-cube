@@ -64,7 +64,9 @@ public:
         }
     }
 
-    void reset() {}
+    void reset() {
+        this->frame = 0;
+    }
 };
 
 #endif //WAVES_I_CPP_

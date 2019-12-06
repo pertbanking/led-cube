@@ -99,6 +99,8 @@ public:
     }
 
     void reset() {
+        this->frame = 0;
+
         corner = 0;
         top = false;
         pos = 7;
