@@ -53,6 +53,8 @@ public:
     }
 
     void reset() {
+        this->frame = 0;
+
         planedir = 0;
         layer = 0;
     }

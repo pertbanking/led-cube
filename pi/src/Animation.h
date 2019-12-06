@@ -24,9 +24,6 @@ private:
     const string name;
     int restDuration;
 
-    // you can't use this constructor!
-    Animation();
-
 protected:
 
     int frame;  //< The current animation's frame. Change this if you're

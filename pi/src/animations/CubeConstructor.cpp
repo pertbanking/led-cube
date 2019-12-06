@@ -116,6 +116,8 @@ public:
     }
 
     void reset() {
+        this->frame = 0;
+
         std::random_shuffle(segments.begin(), segments.end());
         edge_counter = 0;
         p1 = std::vector<float> {0.0, 0.0, 0.0};

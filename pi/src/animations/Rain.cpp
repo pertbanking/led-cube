@@ -65,6 +65,8 @@ public:
     }
 
     void reset() {
+        this->frame = 0;
+
         // empty the drops vector
         drops = std::vector<std::vector<float>>();
     }

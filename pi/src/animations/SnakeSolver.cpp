@@ -18,18 +18,18 @@
 
 const std::string SNAKESOLVER_NAME = "Snake solver";
 const int SNAKESOLVER_FRAMERATE = 60;
-const int SNAKESOLVER_DURATION = 250;
+const int SNAKESOLVER_DURATION = 500;
 
 /**
  * Slowly builds a cube out of its constituent line segments
  */
 class SnakeSolver : public Animation {
 private:
-    const float CUBE_EDGE = float(CUBE_SIZE) - 1.5f;
-    const float MOVE_SPEED = 0.85f;
-    std::vector<std::pair<float, float>> snake_points;
-    std::pair<float, float> head_point;
-    std::pair<float, float> food_point;
+    const int MOVE_SPEED = 2;
+    const int BLINK_SPEED = 3;
+    std::vector<std::pair<int, int>> snake_points;
+    std::pair<int, int> head_point;
+    std::pair<int, int> food_point;
 
 public:
     CubeConstructor()

@@ -77,7 +77,9 @@ public:
         }
     }
 
-    void reset() {}
+    void reset() {
+        this->frame = 0;
+    }
 };
 
 #endif //WAVES_II_CPP_

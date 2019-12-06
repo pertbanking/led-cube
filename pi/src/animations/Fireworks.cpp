@@ -139,6 +139,8 @@ public:
     }
 
     void reset() {
+        this->frame = 0;
+
         rockets = std::vector<std::tuple<float,float,float>>();
         debris = std::vector<std::tuple<float,float,float,float,float,float,int>>();
     }
