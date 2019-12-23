@@ -21,43 +21,93 @@ const int SNAKESOLVER_FRAMERATE = 60;
 const int SNAKESOLVER_DURATION = 500;
 
 /**
- * Slowly builds a cube out of its constituent line segments
+ * Plays Snake with itself
  */
 class SnakeSolver : public Animation {
 private:
+    enum SnakeDirection {
+        POSITIVE_X = 0,
+        POSITIVE_Y,
+        POSITIVE_Z,
+        NEGATIVE_X,
+        NEGATIVE_Y,
+        NEGATIVE_Z
+    }
+
     const int MOVE_SPEED = 2;
-    const int BLINK_SPEED = 3;
-    std::vector<std::pair<int, int>> snake_points;
-    std::pair<int, int> head_point;
-    std::pair<int, int> food_point;
+    const int FOOD_BLINK_SPEED = 3;
+
+    std::default_random_engine gen;
+    std::uniform_int_distribution<int> food_placer;
+    std::uniform_int_distribution<int> snake_director;
+
+    std::vector<std::tuple<int,int,int>> snake_points;
+    std::tuple<int,int,int> head_point;
+    std::tuple<int,int,int> food_point;
+    int snake_starting_direction;
+    
+    bool food_on;
+    int food_on_counter;
 
 public:
-    CubeConstructor()
+    SnakeSolver()
     : Animation(
         SNAKESOLVER_NAME, 
         SNAKESOLVER_FRAMERATE, 
         SNAKESOLVER_DURATION)
-    , snake_points({
-            {}
-        })
-    , head_point()
-    , food_point() {
-        std::random_shuffle(segments.begin(), segments.end());
+    , gen(std::chrono::system_clock::now().time_since_epoch().count())
+    , food_placer(0,7)
+    , snake_director(0,5);
+    , snake_points(5)
+    , head_point(food_placer(gen), food_placer(gen), food_placer(gen))
+    , food_point(food_placer(gen), food_placer(gen), food_placer(gen))
+    , snake_starting_direction(snake_director(gen))
+    , food_on(true)
+    , food_on_counter(0) {
+        
     }
 
     void calculateNext(LEDCube* cube) {
         cube->clear();
 
-        for (unsigned int i = 0; i < edge_counter; ++i) {
-            cube->drawLine(
-                std::get<0>(segments[i]), 
-                std::get<1>(segments[i]),
-                std::get<2>(segments[i]),
-                std::get<3>(segments[i]), 
-                std::get<4>(segments[i]),
-                std::get<5>(segments[i])
+        for (int i : snake_points) {
+            cube->drawPoint(std::get<0>(i), std::get<1>(i), std::get<2>(i));
+        }
+        
+        if (food_on) {
+            cube->drawPoint(
+                std::get<0>(food_point),
+                std::get<1>(food_point),
+                std::get<2>(food_point)
             );
         }
+
+        food_on_counter = (food_on_counter + 1) % FOOD_BLINK_SPEED;
+
+        if (food_point == head_point) {
+            std::get<0>(food_point) = food_placer(gen);
+            std::get<1>(food_point) = food_placer(gen);
+            std::get<2>(food_point) = food_placer(gen);
+            // add a bogus point to the end of the vector to be shifted out
+            // later
+            snake_points.emplace_back(0,0,0);
+        }
+
+        // make a list of directions the snake can go
+        std::set<SnakeDirection> viable_directions;
+        for (int i = 0; i <= static_cast<int>(SnakeDirection::NEGATIVE_Z); ++i)
+        {
+            viable_directions.insert(static_cast<SnakeDirection>(i));
+        }
+        // x-axis
+        if (std::get<0>(head_point))
+
+        // the snake will randomly change directions, but will only do so if the
+        // direction the randomizer provides is still beneficial to finding the
+        // food
+        SnakeDirection dir_attempt = static_cast<SnakeDirection>
+
+
 
         cube->drawLine(p1[0], p1[1], p1[2], p2[0], p2[1], p2[2]);
 

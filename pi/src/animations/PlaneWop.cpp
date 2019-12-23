@@ -57,6 +57,7 @@ public:
 
         planedir = 0;
         layer = 0;
+        up = true;
     }
 };
 

@@ -111,12 +111,13 @@ public:
             rest(5);
         } else if (next) {
             // halt
-            rest(10000000);
+            rest(100000);
         }
     }
 
     void reset() {
         this->frame = 0;
+        rest(0);  // stop resting
 
         std::random_shuffle(segments.begin(), segments.end());
         edge_counter = 0;

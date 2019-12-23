@@ -266,30 +266,6 @@ void LEDCube::drawLine(
         }
     }
 
-    // cout << "xy: " << endl;
-    // for (int i = 0; i < CUBE_SIZE; ++i) {
-    //     for (int j = 0; j < CUBE_SIZE; ++j) {
-    //         cout << xyplane[i][j];
-    //     }
-    //     cout << endl;
-    // }
-
-    // cout << "xz: " << endl;
-    // for (int i = 0; i < CUBE_SIZE; ++i) {
-    //     for (int j = 0; j < CUBE_SIZE; ++j) {
-    //         cout << xzplane[i][j];
-    //     }
-    //     cout << endl;
-    // }
-
-    // cout << "yz: " << endl;
-    // for (int i = 0; i < CUBE_SIZE; ++i) {
-    //     for (int j = 0; j < CUBE_SIZE; ++j) {
-    //         cout << yzplane[j][i];
-    //     }
-    //     cout << endl;
-    // }
-
     // if the planes all agree, illuminate the voxel
     for (uint8_t i = 0; i < CUBE_SIZE; ++i) {
         for (uint8_t j = 0; j < CUBE_SIZE; ++j) {

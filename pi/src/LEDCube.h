@@ -193,7 +193,7 @@ public:
      * @param x0    x0
      * @param y0    y0
      * @param z0    z0
-     * @param x1    c1
+     * @param x1    x1
      * @param y1    y1
      * @param z1    z1
      * @param scale pre-divisor of the coordinates (optional)
@@ -225,18 +225,42 @@ public:
      */
     void drawZPlane(uint8_t z);
 
+    /**
+     * @brief Draws a sphere with the buffer equal to the border width.
+     * @param x      x
+     * @param y      y
+     * @param z      z
+     * @param radius The sphere's radius
+     * @param buffer The distance that points will be considered around the
+     *               surface of the sphere. The distance is applied inward and
+     *               outward.
+     * @param filled Is the sphere filled or hollow?
+     */
     void drawSphere(
         uint8_t x, 
         uint8_t y, 
         uint8_t z, 
         float radius, 
+        float buffer,
         bool filled = false);
 
+    /**
+     * @brief Draws a sphere with the buffer equal to the border width.
+     * @param x      x
+     * @param y      y
+     * @param z      z
+     * @param radius The sphere's radius
+     * @param buffer The distance that points will be considered around the
+     *               surface of the sphere. The distance is applied inward and
+     *               outward.
+     * @param filled Is the sphere filled or hollow?
+     */
     void drawSphere(
         float x, 
         float y, 
         float z, 
         float radius,
+        float buffer,
         bool filled = false,
         float scale = 1.0f);
 
