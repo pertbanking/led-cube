@@ -54,48 +54,53 @@ set_target_properties(animate
 ## 3D visualizer
 #####################################
 
-#add_executable(
-#	visualizer
-#		src/visualizer.cpp
-#		src/LEDCube.cpp
-#		src/LEDCubeVisualizer.cpp
-#		src/Animation.cpp
-#		src/animations/Rain.cpp
-#		src/animations/PlaneWop.cpp
-#		src/animations/CubeWop_I.cpp
-#		src/animations/Waves_I.cpp
-#		src/animations/FlashFade.cpp
-#		src/animations/Suspension.cpp
-#		src/animations/Waves_II.cpp
-#		src/animations/Wiper.cpp
-#		src/animations/CubeConstructor.cpp
-#)
 
-# Comment out to generate warnings....
-#target_compile_options(visualizer PUBLIC
-#	# ...at all
-#	-Wall
-#	# ...in abundance
-#	-Wextra
-#	# ...as errors
-#	#-Werror
-#)
+find_package(OpenGL OPTIONAL_COMPONENTS)
+find_package(glfw3 3.1 OPTIONAL_COMPONENTS)
 
-#find_package(OpenGL)
-#find_package(GLUT)
+if (NOT OpenGL_FOUND)
+	message(WARNING "OpenGL was not found. You cannot run the visualizer, but you can still run 'make' and create the basic LED cube USB client.")
+endif()
 
-#if (NOT OpenGL_FOUND)
-#	message(WARNING "OpenGL was not found. You cannot run the visualizer, but you can still run 'make' and create the basic LED cube USB client.")
-#endif()
-#
-#if (NOT GLUT_FOUND)
-#	message(WARNING "GLUT was not found. You cannot run the visualizer, but you can still run 'make' and create the basic LED cube USB client.")
-#endif()
-#
-#target_include_directories(visualizer PUBLIC ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
-#target_link_libraries(visualizer rt pthread ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
-#
-#set_target_properties(visualizer
-#    PROPERTIES
-#    RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
-#)
+if (NOT glfw3_FOUND)
+	message(WARNING "glfw3 was not found. You cannot run the visualizer, but you can still run 'make' and create the basic LED cube USB client.")
+endif()
+
+# only compile the visualizer if the user has OpenGL and glfw3 installed
+if (OpenGL_FOUND AND glfw3_FOUND)
+
+	add_executable(
+		visualizer
+			src/visualizer.cpp
+			src/LEDCube.cpp
+			src/LEDCubeVisualizer.cpp
+			src/Animation.cpp
+			src/animations/Rain.cpp
+			src/animations/PlaneWop.cpp
+			src/animations/CubeWop_I.cpp
+			src/animations/Waves_I.cpp
+			src/animations/FlashFade.cpp
+			src/animations/Suspension.cpp
+			src/animations/Waves_II.cpp
+			src/animations/Wiper.cpp
+			src/animations/CubeConstructor.cpp
+	)
+	
+	# Comment out to generate warnings....
+	target_compile_options(visualizer PUBLIC
+		# ...at all
+		-Wall
+		# ...in abundance
+		-Wextra
+		# ...as errors
+		#-Werror
+	)
+
+	target_include_directories(visualizer PUBLIC ${OPENGL_INCLUDE_DIRS} ${glfw_INCLUDE_DIRS})
+	target_link_libraries(visualizer rt pthread ${OPENGL_LIBRARIES} glfw)
+
+	set_target_properties(visualizer
+	    PROPERTIES
+	    RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
+	)
+endif()

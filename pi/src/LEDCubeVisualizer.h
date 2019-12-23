@@ -9,6 +9,11 @@
 #ifndef LEDCUBEVISUALIZER_H_
 #define LEDCUBEVISUALIZER_H_
 
+// Include GLEW
+#include <GL/glew.h>
+
+// Include GLFW
+#include <GLFW/glfw3.h>
 
 #include "LEDCube.h"
 
@@ -17,8 +22,14 @@ class LEDCubeVisualizer : public LEDCube {
 
 private:
 
+    GLFWwindow* window;
+
     static LEDCubeVisualizer* instance;
-    
+
+    static GLfloat cube_vertices[];
+    static GLfloat cube_colors[];
+    static const int COLOR_LENGTH;
+
     // private, use only indirectly (i.e. in getInstance())
     LEDCubeVisualizer(int message_rate);
 
@@ -28,22 +39,39 @@ private:
     const LEDCubeVisualizer& operator=(const LEDCubeVisualizer&);
 
     /**
-     * [drawGrid description]
-     */
-    static void drawGrid();
-
-    /**
      * [display description]
      */
     static void display();
 
     /**
-     * [keyboard description]
-     * @param key [description]
-     * @param x   [description]
-     * @param y   [description]
+     * [drawGrid description]
      */
-    static void keyboard(unsigned char key, int x, int y);
+    static void drawGrid();
+
+    /**
+     * [drawVoxel description]
+     * @param x  [description]
+     * @param y  [description]
+     * @param z  [description]
+     * @param on [description]
+     */
+    static void drawVoxel(int x, int y, int z, bool on);
+
+    /**
+     * [keyboard description]
+     * @param window   [description]
+     * @param key      [description]
+     * @param scancode [description]
+     * @param action   [description]
+     * @param mods     [description]
+     */
+    static void keyboard(
+        GLFWwindow* window,
+        int key,
+        int scancode,
+        int action,
+        int mods
+    );
 
 
 public:

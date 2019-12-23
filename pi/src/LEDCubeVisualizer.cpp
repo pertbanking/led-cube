@@ -12,8 +12,11 @@
 
 #include "LEDCubeVisualizer.h"
 
+#include <exception>
 #include <iostream>
+#include <system_error>
 #include <thread>
+#include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 
@@ -22,19 +25,30 @@
 
 // Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
 
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
+// this file computes the shaders for our visualizer
+// #include "opengl/shader.hpp"
 
-// this file computes the shaders for ouv visualizer
-#include "opengl/shader.hpp"
+// forward decl for static member
+GLfloat LEDCubeVisualizer::cube_vertices[] = {
+    -0.1, -0.1, -0.1,   -0.1, -0.1,  0.1,   -0.1,  0.1,  0.1,   -0.1,  0.1, -0.1,
+     0.1, -0.1, -0.1,    0.1, -0.1,  0.1,    0.1,  0.1,  0.1,    0.1,  0.1, -0.1,
+    -0.1, -0.1, -0.1,   -0.1, -0.1,  0.1,    0.1, -0.1,  0.1,    0.1, -0.1, -0.1,
+    -0.1,  0.1, -0.1,   -0.1,  0.1,  0.1,    0.1,  0.1,  0.1,    0.1,  0.1, -0.1,
+    -0.1, -0.1, -0.1,   -0.1,  0.1, -0.1,    0.1,  0.1, -0.1,    0.1, -0.1, -0.1,
+    -0.1, -0.1,  0.1,   -0.1,  0.1,  0.1,    0.1,  0.1,  0.1,    0.1, -0.1,  0.1
+};
 
+GLfloat LEDCubeVisualizer::cube_colors[] = {
+    0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,
+    0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0,   0.0, 0.0, 0.0
+};
 
-using namespace std;
-
+const int LEDCubeVisualizer::COLOR_LENGTH = 72;
 
 LEDCubeVisualizer* LEDCubeVisualizer::instance = nullptr;
 
@@ -68,17 +82,9 @@ void LEDCubeVisualizer::destroyInstance() {
 // display functions
 // ==================================
 
-void LEDCubeVisualizer::drawVoxel(float x, float y, float z, bool on) {
-    glPushMatrix();
-
-    glTranslatef(x, y, z);
-    if (on)
-        glColor3f(1, 1, 1);
-    else
-        glColor3f(0.2f, 0.2f, 0.2f);
-    glutSolidCube(0.2f);
-
-    glPopMatrix();
+// helper function for drawGrid() below
+void LEDCubeVisualizer::drawVoxel(int x, int y, int z, bool on) {
+    
 }
 
 void LEDCubeVisualizer::drawGrid() {
@@ -108,23 +114,60 @@ void LEDCubeVisualizer::drawGrid() {
 void LEDCubeVisualizer::display() {
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glLoadIdentity();
     glTranslatef(-13, 0, -45);
     glRotatef(40, 1, 1, 0);
 
-    drawGrid();
+    // drawGrid();
 
-    for (int i = 0; i < CUBE_SIZE; ++i)
-        for (int j = 0; j < CUBE_SIZE; ++j)
-            for (int k = 0; k < CUBE_SIZE; ++k)
-                drawVoxel(float(i), float(j), float(k), instance->data[i][j][k]);
+    for (int i = 0; i < CUBE_SIZE; ++i) {
+        for (int j = 0; j < CUBE_SIZE; ++j) {
+            for (int k = 0; k < CUBE_SIZE; ++k) {
+                for (int i = 0; i < LEDCubeVisualizer::COLOR_LENGTH; ++i) {
+                    LEDCubeVisualizer::cube_colors[i]
+                        = (instance->data[i][j][k])? 0.8 : 0.2;
 
-    glutSwapBuffers();
+                    glPushMatrix();
 
-    
+                    glTranslatef(
+                        static_cast<float>(i),
+                        static_cast<float>(j),
+                        static_cast<float>(k)
+                    );
+
+                    // if (instance->data[i][j][k]) {
+                    //     glColor3f(1.0f, 1.0f, 1.0f);
+                    // } else {
+                    //     glColor3f(0.2f, 0.2f, 0.2f);
+                    // }
+
+                    glEnableClientState(GL_VERTEX_ARRAY);
+                    glEnableClientState(GL_COLOR_ARRAY);
+                    glVertexPointer(3, GL_FLOAT, 0, LEDCubeVisualizer::cube_vertices);
+                    glColorPointer(3, GL_FLOAT, 0, LEDCubeVisualizer::cube_colors);
+
+                    glDrawArrays(GL_QUADS, 0, 24);
+
+                    glDisableClientState(GL_COLOR_ARRAY);
+                    glDisableClientState(GL_VERTEX_ARRAY);
+
+                    glPopMatrix();
+                }
+            }
+        }
+    }
+
+
+    glfwSwapBuffers(LEDCubeVisualizer::getInstance()->window);
 }
 
-void LEDCubeVisualizer::keyboard(unsigned char key, int x, int y) {
+void LEDCubeVisualizer::keyboard(
+    GLFWwindow* window,
+    int key,
+    int scancode,
+    int action,
+    int mods) {
     // this is here if we need it?
 }
 
@@ -133,27 +176,36 @@ void LEDCubeVisualizer::show() {
     // start the display thread
     render_thread = std::thread([this](void) {
         if(!glfwInit()) {
-            throw new std::system_error("Failed to initialize GLFW");
+            throw std::system_error(
+                ECANCELED,
+                std::generic_category(),
+                "Failed to initialize GLFW"
+            );
         }
 
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // make MacOS happy
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         // Open a window and create its OpenGL context
         window = glfwCreateWindow(1024, 768, "Cube Visualization", NULL, NULL);
-        if(window == NULL) {
+        if (window == NULL) {
             glfwTerminate();
-            throw new std::system_error("Failed to make a GLFW window");
+            throw std::system_error(
+                ECANCELED,
+                std::generic_category(),
+                "Failed to make a GLFW window"
+            );
         }
         glfwMakeContextCurrent(window);
 
         // Dark blue background
         glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
         
-        glutKeyboardFunc(keyboard);
+        glfwSetKeyCallback(window, &LEDCubeVisualizer::keyboard);
+        glfwSetInputMode(window, GLFW_STICKY_KEYS, 1);
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
@@ -162,7 +214,13 @@ void LEDCubeVisualizer::show() {
         glEnable(GL_DEPTH_TEST);
         std::cout << ":";
 
-        glutMainLoop();
+        while (!glfwWindowShouldClose(window)) {
+            instance->display();
+        }
+
+        glfwTerminate();
+
+        std::exit(0);
     });
 }
 
